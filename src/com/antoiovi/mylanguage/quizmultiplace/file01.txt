@@ -1,0 +1,7 @@
+Casa = La
+Cavallo= Il
+Cervo= Il
+Caramella = La
+Fontana=La
+Straccio = Lo
+Strutto= Lo
