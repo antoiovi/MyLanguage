@@ -4,7 +4,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
-
+/**
+ * 
+ * @author   Antonello Iovino
+ *
+ */
 public class Quizword {
 	public static final int END_GAME=1;
 	public static final int NEXT_ANSWER=2;

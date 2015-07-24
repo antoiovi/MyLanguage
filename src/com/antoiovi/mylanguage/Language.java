@@ -13,8 +13,17 @@ import java.util.Vector;
 import com.sun.org.apache.regexp.internal.recompile;
 
 public class Language implements Mylanguage {
-   File textfile;
+   /**
+    * The file in use by the editor
+    */
+	File textfile;
+   /**
+    * The time to be used for pop up periodically by
+    * 	Start_pops and Start_quizzing
+    */
    int minuti=5;
+   
+   char DELIMITER='=';
    
    public Language() {
 	
@@ -29,6 +38,10 @@ public class Language implements Mylanguage {
 	
 	/**
 	 * 24/07/2015 Added File verification
+	 *  converted to booelan to test validity of file.
+	 *  	Only text file are valid!!!
+	 *  	Override the method or cretae a new prptotype
+	 *  	to accept other files.
 	 */
 	@Override
 	public boolean setTextfile(File textfile) {
@@ -52,24 +65,46 @@ public class Language implements Mylanguage {
 
 	@Override
 	public void ConnectDb() {
-		// TODO Auto-generated method stub
-
+		try {
+			throw new Exception("Unumplemetd");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
-// Crea un thread di tipo TimerTask (Sends_popup) e lo richiama periodicamente
+
+	/**
+	 * Create a thread of type TimerTask an periodically run it
+	 */
 	@Override
 	public void Start_popups() throws Exception {
-		// Verifica se il file è idoneo; attualmente verifica solo se è null
-		if(!testfile()){
+		/**
+		 * Verifica se il file è idoneo; attualmente verifica solo se è null
+		 * 24/07/2015  The file verification is made in setFile(File );
+		 * 				so if is not null, its verified as text File.
+		 * 			others verification for more specific formats
+		 * 			can be made here. 
+		 */
+		if(textfile==null){
 			throw new Exception("textfile not inizialized");
 		}
 		Sends_popups sp = new Sends_popups(this); 
 	    java.util.Timer timer = new java.util.Timer(); 
 	    timer.schedule(sp,0,1000*60*minuti); 
 	  	}
+	/**
+	 * Create a thread of type TimerTask an periodically run it
+	 */
 	@Override
 	public void Start_popquiz() throws Exception {
-		// Verifica se il file è idoneo; attualmente verifica solo se è null
-		if(!testfile()){
+		/**
+		 * Verifica se il file è idoneo; attualmente verifica solo se è null
+		 * 24/07/2015  The file verification is made in setFile(File );
+		 * 				so if is not null, its verified as text File.
+		 * 			others verification for more specific formats
+		 * 			can be made here. 
+		 */
+		if(textfile==null){
 			throw new Exception("textfile not inizialized");
 		}
 		TimertaskQuizword sp = new TimertaskQuizword(this); 
@@ -79,20 +114,30 @@ public class Language implements Mylanguage {
 
 	
 	@Override
-	public void Start_speaking() {
-		// TODO Auto-generated method stub
+	public void Start_speaking()  {
+		try {
+			throw new Exception("Unimplemetd");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
-
+/**
+ * A list of strings: one string each not empty row
+ */
 	@Override
 	public List<String> getListWords() {
-		
+		if(textfile==null)
+			return null;
 		List<String> dati=new ArrayList<String>();
 		try{
 			BufferedReader br = new BufferedReader(new FileReader(textfile));
 			String line;
 			
 			while ((line = br.readLine()) != null ) {
+				if(line.isEmpty())
+					continue;
 				dati.add(line);
 			}
 			br.close();
@@ -104,13 +149,16 @@ public class Language implements Mylanguage {
 				
 		return dati;
 	}
-
+ /**
+  * not yet used cause the validaation is made in setTextFile(File)
+  * 	can be implemented some specific verification.
+  * @return
+  */
 	private boolean testfile(){
 		if(textfile==null)
 			return false;
 		return true;
 	}
-
 
 	@Override
 	public void setTimePopsup(int minuti) {
@@ -127,7 +175,7 @@ public class Language implements Mylanguage {
 		try{
 			BufferedReader br = new BufferedReader(new FileReader(infile));
 			String line;
-			String delims = "[=]+"; // use + to treat consecutive delims as one;
+			String delims = "["+DELIMITER+"]+"; // use + to treat consecutive delims as one;
             // omit to treat consecutive delims separately
 			// Per ogni riga
 			while ((line = br.readLine()) != null ) {
@@ -160,15 +208,21 @@ public class Language implements Mylanguage {
 		return PairKeyWord;
 	}
 
-
+/**
+ * Create a map<key,value> wher key value are extracted from
+ * each line of the file, in wich they are separated by the DELIMITER
+ * 	the default delimiter is =; 
+ * then a new object Quizword is returned
+ */
 	@Override
 	public Quizword getQuizword() throws Exception {
-HashMap<String,String> map=new LinkedHashMap<String,String>();
+		
+		HashMap<String,String> map=new LinkedHashMap<String,String>();
 		//Vector PairKeyWord=new Vector<Vector<Object>>();
 		try{
 			BufferedReader br = new BufferedReader(new FileReader(textfile));
 			String line;
-			String delims = "[=]+"; // use + to treat consecutive delims as one;
+			String delims = "[" + DELIMITER + "]+"; // use + to treat consecutive delims as one;
             // omit to treat consecutive delims separately
 			// Per ogni riga
 			while ((line = br.readLine()) != null ) {

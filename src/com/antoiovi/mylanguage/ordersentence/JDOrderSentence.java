@@ -15,6 +15,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.awt.Color;
 
 import javax.swing.JCheckBox;
@@ -26,9 +27,13 @@ import java.awt.event.ItemEvent;
 
 import javax.swing.JScrollPane;
 
+import com.antoiovi.mylanguage.MyProperties;
+
 import java.awt.Dimension;
 import java.awt.Button;
 import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 //import java.awt.ScrollPane;
 /**
  * 
@@ -39,8 +44,9 @@ import java.io.File;
 public class JDOrderSentence extends JDialog implements Quizinterface{
 	
 	private OrderSentence ordersentence;
+	Properties properties = MyProperties.getInstance().getProperties();
 	int index=0;
-	File file;
+	File file_data;
 	private List<String> sentences;
 	/**
 	 * JCompnents
@@ -82,6 +88,11 @@ public class JDOrderSentence extends JDialog implements Quizinterface{
 		
 		JPanel panel_1 = new JPanel();
 		contentPane.add(panel_1, BorderLayout.NORTH);
+		/**
+		 * load the properties : filedata name, ...
+		 */
+		loadproperties();
+		
 		/*****************************
 		 * OpenFile
 		 */
@@ -93,16 +104,20 @@ public class JDOrderSentence extends JDialog implements Quizinterface{
 				int x = jfilechooser
 						.showOpenDialog(contentPane);
 				if (x == JFileChooser.APPROVE_OPTION) {
-					file = jfilechooser.getSelectedFile();
+					file_data = jfilechooser.getSelectedFile();
 				}
-				setDataFile(file);
+				/**
+				 * the check of file is not made here.. 
+				 */
+				setDataFile(file_data);
+				 
 			}
 		});
 		panel_1.add(btnOpenfile);
 		
 		lblScore = new JLabel("New label");
 		panel_1.add(lblScore);
-		/***********
+		/**************************
 		 * previous
 		 */
 		JButton btnPrev = new JButton("<<");
@@ -162,8 +177,6 @@ public class JDOrderSentence extends JDialog implements Quizinterface{
 		panel_ordsent = new JPOrdersentence();
 		jscrollPane = new JScrollPane((JPanel)panel_ordsent);
 		contentPane.add(jscrollPane, BorderLayout.CENTER);
-		
-		
 		//contentPane.add(panel_ordsent, BorderLayout.EAST);
 		panel_ordsent.setQuiz(this);
 		panel_ordsent.setBackground(Color.WHITE);
@@ -173,6 +186,10 @@ public class JDOrderSentence extends JDialog implements Quizinterface{
 
 
 	void init(){
+		/**
+		 * if file is null on not valid any modification occours
+		 */
+		ordersentence.setDataFile(file_data);
 		
 		sentences=ordersentence.getSentences();
 		index=1;
@@ -196,18 +213,30 @@ void resetSentence(){
 }
 
 /**
- * Set the DATA FILE
+ * Set the DATA FILE the check of file is made inside ordersentence
  * @param file_txt
  * @return
  */
 public boolean setDataFile(File file_txt) {
-if( ordersentence.setDataFile(file_txt)){
-	 init();
+	if(ordersentence==null)
+		return false;
+	/**
+	 * if file is null on not valid any modification occours
+	 */
+	if(!ordersentence.setDataFile(file_data))
+		return false;
+	SAVEPROPERTIES();
+	/**
+	 * reset the sentences
+	 */
+	sentences=ordersentence.getSentences();
+	index=1;
+	panel_ordsent.configSentence(sentences.get(index));
+	
+	//lblNotification.setText(sentences.get(index));
+	lblNotification.setText("GO ...!");
+	updatescore();
 	return true;
-}else{
-	return false;
-}
-
 }
 
 int score=0;
@@ -242,8 +271,51 @@ public void rightAnswer() {
 @Override
 public void endGame() {
 	lblNotification.setText("END !!");
-	
 }
 
+/**
+ * load stored properties
+ */
+private void loadproperties(){
+	InputStream inputProp = null;
+ 	try {
+ 	inputProp=MyProperties.getInstance().inputStreamProperties();
+ 	if (inputProp != null) {
+		properties.load(inputProp);
+		String filename=properties.getProperty(MyProperties.FILE_QUIZ_ORDERSENT);
+		//System.out.println("Flename= "+filename);
+		if(filename!=null){
+		file_data=new File(filename);
+		//System.out.println("Flename != null = "+filename);
+		}else{
+			file_data=null;
+		}
+	}
+		}catch(Exception e)
+		{	
+			e.printStackTrace();
+			file_data=null;
+		}
+}
+
+
+
+/**
+ * save properties (options)
+ */
+void SAVEPROPERTIES(){
+	OutputStream output = null;
+	if(file_data==null)
+		return;
+	try {
+		output=MyProperties.getInstance().outputStreamProperties();
+		properties.setProperty(MyProperties.FILE_QUIZ_ORDERSENT, file_data.getAbsolutePath());
+		properties.store(output, null);
+		output.close();
+	}catch(Exception e){
+		System.out.println(e.getMessage());
+	} 
+	
+}
 	
 }

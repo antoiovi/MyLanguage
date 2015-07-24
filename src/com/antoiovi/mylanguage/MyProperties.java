@@ -45,6 +45,7 @@ public class MyProperties {
 	public static final String filepropname = "config.properties";
 	public static final String FILE_QUIZ_PROP="filename";
 	public static final String FILE_MULTIQUIZ_PROP="filename_quizmultiple";
+	public static final String FILE_QUIZ_ORDERSENT="filename_quizordersentence";
 	public static final String DELAY_PROP="delay";
 	
 	private MyProperties(){

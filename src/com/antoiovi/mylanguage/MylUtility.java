@@ -23,7 +23,7 @@ int others=0;
 	try {
 		String mimeType = Files.probeContentType(file.toPath());
 		System.out.println(String.format("Mimetype : %s", mimeType));
-		if(mimeType.equals("text/plain"))
+		if(mimeType!=null && mimeType.equals("text/plain"))
 			return true;
             in = new FileInputStream(file.getAbsolutePath());
           //  out = new FileOutputStream("outagain.txt");
@@ -36,7 +36,7 @@ int others=0;
                formt_char++;
             	else
             		others++;
-            	if(asci_char>1000){
+            	if((asci_char+others)>1000){
             		float ratio_oth=(float)asci_char/(float)others;
             		/*float ratio_oth=(float)asci_char/(float)others;
             		float ratio_form=(float)asci_char/(float)formt_char;*/

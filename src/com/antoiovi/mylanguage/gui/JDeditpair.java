@@ -32,6 +32,7 @@ import javax.swing.Action;
 
 
 
+
 import com.antoiovi.mylanguage.Language;
 import com.antoiovi.mylanguage.Mylanguage;
 import com.antoiovi.mylanguage.Quizword;
@@ -63,6 +64,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import com.antoiovi.mylanguage.MyProperties;
+import com.antoiovi.mylanguage.ordersentence.JDOrderSentence;
 import com.antoiovi.mylanguage.quizmultiplace.JDQuizMultiple;
 public class JDeditpair extends JDialog implements ActionListener,TableModelListener,
 		Serializable {
@@ -104,6 +106,7 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 	Quiz_game quizgame;
 	private JMenuItem mntmQuizScore;
 	private JMenuItem mntmQuizMultiple;
+	private JMenuItem mntmQuizSortSentece;
 
 	/**
 	 * Launch the application.
@@ -433,6 +436,20 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 						}
 					});
 					mnPlay.add(mntmQuizMultiple);
+				}
+				/***********************************************
+				 * ORDER SENTENCE
+				 ***************************************************/
+				{
+					mntmQuizSortSentece = new JMenuItem("Quiz sort sentece");
+					mntmQuizSortSentece.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent arg0) {
+							JDOrderSentence quizordersentence=new JDOrderSentence();
+							quizordersentence.setModalityType(Dialog.ModalityType.DOCUMENT_MODAL);
+							quizordersentence.setVisible(true);
+						}
+					});
+					mnPlay.add(mntmQuizSortSentece);
 				}
 			}
 			/*******************************

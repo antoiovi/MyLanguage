@@ -32,13 +32,23 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 import com.antoiovi.mylanguage.Quizword;
-
+/**
+ * 
+ * @author   Antonello Iovino
+ * Usage : after the consttructor call setQuizword(Quizword quizword);
+ * 		quizword 
+ *	Is shown a question and 3 buttons with answers ,only 1 right
+ *
+ */
 public class Popupquiz extends JDialog implements ActionListener {
-	private String myword;
-	private String mytext;
+	protected Quizword quizword;
+	String question="";
+	String answer="";
+	String answerS[]={"","","","",""};
 	public final int OK = 0;
 	public final int ESC = 1;
 	public final int NOT_VALID=2;
+	
 	Popupquiz jdialog;
 
 	private final JPanel contentPanel = new JPanel();
@@ -46,10 +56,7 @@ public class Popupquiz extends JDialog implements ActionListener {
 	protected JButton btnAnswer1;
 	protected JButton btnAnswer2;
 	protected JButton btnAnswer3;
-	protected Quizword quizword;
-	String question="";
-	String answer="";
-	String answerS[]={"","","","",""};
+	
 	protected JLabel wrongLabel;
 	protected JLabel okLabel;
 	protected JTextArea textArea;

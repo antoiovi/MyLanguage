@@ -16,7 +16,7 @@ public class Quiz_game extends Popupquiz {
 		super();
 		setModal(true);
 		 okButton.setText("Fine");
-	 cancelButton.setVisible(false);
+		 cancelButton.setVisible(false);
 		
 	}
 
