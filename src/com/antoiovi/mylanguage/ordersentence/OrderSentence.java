@@ -1,0 +1,130 @@
+package com.antoiovi.mylanguage.ordersentence;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
+import com.antoiovi.mylanguage.Mazzocarte;
+import com.antoiovi.mylanguage.MylUtility;
+import com.antoiovi.mylanguage.QuestionAnswer;
+
+public class OrderSentence {
+Vector<String> sentences_list;
+
+private Mazzocarte mazzo;
+private File file;
+	
+	public OrderSentence(File file_){
+		this.file=file_;
+		sentences_list=new Vector<String>();
+		if(file==null){
+		String sentence=  "This is a random sentence , try to catch it ciao ciao marameo !!";
+		for (int x = 0; x < 5; x++) {
+			sentence=sentence.concat("word "+x);
+			sentences_list.add(sentence);
+		}
+		}else{
+			inizializeFromFile();
+		}
+		/**
+		 * Inizialize the deck of cards
+		 */
+		try {
+			mazzo = new Mazzocarte(sentences_list.size());
+		} catch (Exception e) {
+			// hsetq.size minore di 1
+		}
+		
+	}
+	public OrderSentence(){
+		sentences_list=new Vector<String>();
+		 
+		String sentence=  "This is a random sentence , try to catch it ciao ciao marameo !!";
+		for (int x = 0; x < 5; x++) {
+			sentence=sentence.concat("word "+x);
+			sentences_list.add(sentence);
+		}
+		 
+		/**
+		 * Inizialize the deck of cards
+		 */
+		try {
+			mazzo = new Mazzocarte(sentences_list.size());
+		} catch (Exception e) {
+			// hsetq.size minore di 1
+		}
+		
+	}
+	
+	
+	
+	/**
+	 * 
+	 * @return a list of shaked (mixed) strings questions
+	 */
+	public List<String> getSentences() {
+		mazzo.setNcarte(sentences_list.size());
+		mazzo.mescola();
+		//System.out.println(String.format("Mazzo sie %d \t sentences_lsit.size %d", mazzo.getNcarte(),sentences_list.size()));
+		List<String> sentences = new ArrayList<String>();
+		Iterator iter = mazzo.getMazzo().iterator();
+		Object[] o = sentences_list.toArray();
+		while (iter.hasNext()) {
+			Integer in = (Integer) iter.next();
+			sentences.add(sentences_list.get(in-1));
+		}
+	//	System.out.println(String.format(" sentences.size %d",  sentences.size()));
+		return sentences;
+	}
+	
+	private boolean inizializeFromFile(){
+		sentences_list.clear();
+		int count=0;
+		try{
+			BufferedReader br = new BufferedReader(new FileReader(file));
+			String line;
+			while ((line = br.readLine()) != null ) {
+				if(line.isEmpty())
+					continue;
+				sentences_list.add(line);
+				count++;
+				}
+			//System.out.println("n righe"+count);
+			br.close();
+		}catch(Exception e){
+			return false;
+		}
+	return true;
+}
+	
+	public boolean setDataFile(File file_){
+		if(!testfile(file_)) return false;
+		this.file=file_;
+		return inizializeFromFile();
+		
+	}
+	/**
+	 * Temporarly check only if textfile is not null
+	 * @return
+	 */
+	private boolean testfile(File file_){
+		if(file_==null)
+			return false;
+		try {
+			if(MylUtility.FileIsText(file_))
+			return true;
+			else
+				return false;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	}
+}

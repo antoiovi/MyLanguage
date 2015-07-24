@@ -3,11 +3,14 @@ package com.antoiovi.mylanguage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Vector;
+
+import com.sun.org.apache.regexp.internal.recompile;
 
 public class Language implements Mylanguage {
    File textfile;
@@ -24,10 +27,24 @@ public class Language implements Mylanguage {
 }
 
 	
-	
+	/**
+	 * 24/07/2015 Added File verification
+	 */
 	@Override
-	public void setTextfile(File textfile) {
-		this.textfile=textfile;
+	public boolean setTextfile(File textfile) {
+		try {
+			if(MylUtility.FileIsText(textfile)){
+			this.textfile=textfile;
+			return true;
+			}
+			else
+				return false;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		
 		
 	}
 

@@ -10,7 +10,7 @@ public interface Mylanguage {
  public void Start_popups() throws Exception;
  public void Start_speaking();
  public List<String> getListWords();
-public void setTextfile(File textfile);
+public boolean setTextfile(File textfile);
  public void setTimePopsup(int minuti);
  public Vector getPairKeyWord(File infile)throws Exception;
  public Quizword getQuizword() throws Exception;

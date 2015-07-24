@@ -31,6 +31,7 @@ import javax.swing.Action;
 
 
 
+
 import com.antoiovi.mylanguage.Language;
 import com.antoiovi.mylanguage.Mylanguage;
 import com.antoiovi.mylanguage.Quizword;
@@ -61,6 +62,8 @@ import javax.swing.SpinnerNumberModel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import com.antoiovi.mylanguage.MyProperties;
+import com.antoiovi.mylanguage.quizmultiplace.JDQuizMultiple;
 public class JDeditpair extends JDialog implements ActionListener,TableModelListener,
 		Serializable {
 
@@ -92,13 +95,15 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 	private JButton button;
 	private JMenu mnPlay;
 	private JMenuItem mntmQuiz;
-	Properties prop = new Properties();
+	//Properties prop = new Properties();
+	Properties properties = MyProperties.getInstance().getProperties();
 	private JMenuItem mntmNuovo;
 	private JButton btnNewButton;
 	private JButton btnNuovaRigaSotto;
 	private JButton btnEliminaRigheVuote;
 	Quiz_game quizgame;
 	private JMenuItem mntmQuizScore;
+	private JMenuItem mntmQuizMultiple;
 
 	/**
 	 * Launch the application.
@@ -308,8 +313,13 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 									.showOpenDialog(getContentPane());
 							if (x == JFileChooser.APPROVE_OPTION) {
 								file = jfilechooser.getSelectedFile();
-								mylanguage.setTextfile(file);
-								boolean test=loadFile();
+								/***
+								 * TEST IF IS GOOD File
+								 */
+								if(mylanguage.setTextfile(file)){	
+									// File is a text file...other check is possible
+								 loadFile();
+								}
 							}
 						}
 					});
@@ -409,7 +419,25 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 					});
 					mnPlay.add(mntmQuizScore);
 				}
+				{
+					/***************************************************************************************
+					 * OPEN QUIZ MULTIPLE FRAME
+					 **************************************************************************************/
+					mntmQuizMultiple = new JMenuItem("Quiz multiple");
+					mntmQuizMultiple.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent arg0) {
+							JDQuizMultiple quizMultipleFrame=new JDQuizMultiple();
+							quizMultipleFrame.setModalityType(Dialog.ModalityType.DOCUMENT_MODAL);
+							quizMultipleFrame.setVisible(true);
+							
+						}
+					});
+					mnPlay.add(mntmQuizMultiple);
+				}
 			}
+			/*******************************
+			 * HELP menu
+			 **************************/
 			{
 				mnHel = new JMenu("Help");
 				menuBar.add(mnHel);
@@ -417,6 +445,9 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 					mntmHelp = new JMenuItem("Help");
 					mnHel.add(mntmHelp);
 				}
+				/**************************
+				 * INFO menu
+				 *************************/
 				{
 					mntmInfo = new JMenuItem("Info");
 					mntmInfo.addActionListener(new ActionListener() {
@@ -486,7 +517,9 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getActionCommand().equals("Save")){
-			// SALVA
+			/**
+			 * SAVE THE FILE
+			 */
 				if (file == null) {
 						JFileChooser jfilechooser = new JFileChooser();
 						//jfilechooser.setDialogType(JFileChooser.SAVE_DIALOG);
@@ -590,37 +623,38 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 		}
 	}
 	
-	private void loadproperties(){
-		InputStream inputProp = null;
-	 	try {
-	 		String filepropname = "config.properties";
-	 		//File file=new File(MylanguageGo.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-			//String path=file.getPath();
-			String userdir=System.getProperty("user.dir");
-			 filepropname=userdir+"\\"+filepropname;
-	 		 inputProp = new FileInputStream(filepropname);
-	 		//input = getClass().getClassLoader().getResourceAsStream(userdir+"\\"+filename);
-			if (inputProp != null) {
-			prop.load(inputProp);
-			String delay=prop.getProperty("delay");
-			spinner.getModel().setValue(Integer.parseInt(delay));
-			String filename=prop.getProperty("filename");		
-			file=new File(filename);
-				mylanguage.setTextfile(file);
-				boolean test=loadFile();
-			}
-			}catch(Exception e)
-			{	
-				e.printStackTrace();
-			}
 	
+	/**
+	 * LOAD PROPERTIES
+	 */
+	private void loadproperties() {
+		InputStream inputProp = null;
+		try {
+		
+			inputProp = MyProperties.getInstance().inputStreamProperties();
+			if (inputProp != null) {
+				properties.load(inputProp);
+				String delay = properties.getProperty(MyProperties.DELAY_PROP);
+				if (delay != null)
+					spinner.getModel().setValue(Integer.parseInt(delay));
+				String filename = properties.getProperty(MyProperties.FILE_QUIZ_PROP);
+				if (filename != null) {
+					file = new File(filename);
+					if(mylanguage.setTextfile(file)){
+					 loadFile();
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 	
 	private boolean loadFile(){
 		try {
 			dati = mylanguage.getPairKeyWord(file);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			return false;
 		}
 		Vector<String> header =new Vector<String>();
@@ -632,6 +666,7 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 		this.setChangedData(false);
 		return true;
 	}
+	
 	
 	public void newFile(){
 		Vector PairKeyWord=new Vector<Vector<Object>>();
@@ -656,13 +691,15 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 	private void closeprogram(){
 		OutputStream output = null;
 		try {
-	 			output = new FileOutputStream("config.properties");
+	 			//output = new FileOutputStream("config.properties");
+			output=MyProperties.getInstance().outputStreamProperties();
 	 		// set the properties value
-			prop.setProperty("filename", file.getAbsolutePath());
+			properties.setProperty(MyProperties.FILE_QUIZ_PROP, file.getAbsolutePath());
 			Integer delay=(Integer) spinner.getModel().getValue();
-			prop.setProperty("delay",delay.toString());
+			properties.setProperty(MyProperties.DELAY_PROP,delay.toString());
 			// save properties to project root folder
-			prop.store(output, null);
+			properties.store(output, null);
+			output.close();
 	}catch(Exception e){
 			System.out.println(e.getMessage());
 		}finally{

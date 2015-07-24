@@ -36,12 +36,24 @@ import java.awt.event.ContainerEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
-
+/***
+ * 
+ * @author Antoiovi	Antonello Iovino
+ * 22/07/2015
+ * 	
+ *
+ */
 public class JPQuizMultiple extends JPanel {
 
 	QuizMultiplePlace quizmultp=new QuizMultiplePlace();
+	/**
+	 * QUESTIONS
+	 */
 	private JList jlistQuestions;
 	private ListModel listmodel;
+	/**
+	 * ANSWERS
+	 */
 	private List<String> answers;
 	private JPanel panel_answ;
 	private final Action action = new SwingAction();
@@ -117,26 +129,21 @@ public class JPQuizMultiple extends JPanel {
 				
 		JPanel panel_1 = new JPanel();
 		add(panel_1, BorderLayout.NORTH);
-		/**
+		/*******************************
 		 * OPEN FILE
-		 */
+		****************************** */
 		JButton btnOpenFile = new JButton("Open file");
 		btnOpenFile.addActionListener(new ActionListener() {
-			
-
-			public void actionPerformed(ActionEvent arg0) {
-				
+		public void actionPerformed(ActionEvent arg0) {
 				JFileChooser jfilechooser = new JFileChooser();
 				jfilechooser.setDialogType(JFileChooser.OPEN_DIALOG);
 				int x = jfilechooser
 						.showOpenDialog(contentPane);
 				if (x == JFileChooser.APPROVE_OPTION) {
 					file = jfilechooser.getSelectedFile();
-				 
 				}
 				setDataFile(file);
 			}
-		
 		});
 		
 		panel_1.add(btnOpenFile);
@@ -145,9 +152,9 @@ public class JPQuizMultiple extends JPanel {
 		panel_1.add(lblScore);
 		lblMaxScore = new JLabel(" Max score :");
 		panel_1.add(lblMaxScore);
-		/**
+		/*****************
 		 * reload game
-		 */
+		***************** */
 		btnRELOAD = new JButton("RELOAD!");
 		btnRELOAD.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -156,11 +163,14 @@ public class JPQuizMultiple extends JPanel {
 			}
 		});
 		panel_1.add(btnRELOAD);
+		/***************
+		 * INITIALIZE
+		 **************/
 		init();
 	}
 	
 	/**
-	 * Set the data file
+	 * Set the DATA FILE
 	 * @param file_txt
 	 * @return
 	 */
@@ -180,10 +190,11 @@ public boolean setDataFile(File file_txt) {
 	
 	}
 
-
+/*************************************************
+ * INITIALIZE
+ *************************************************/
 void init(){
-//	answers=new HashSet<String>();
-	
+  
 	/**
 	 * Load the questions
 	 */
@@ -202,11 +213,11 @@ void init(){
 	 answers=quizmultp.getAnswers();
 	 for(String s:answers){
 	 	 JButton btnNewButton = new JButton(s);
-	 	btnNewButton.setAction(new SwingAction(s));
-	 	jbanswers.add(btnNewButton);
+	 	 btnNewButton.setAction(new SwingAction(s));
+	 	 jbanswers.add(btnNewButton);
 		 }
-	 addanswersbuttons();
-	 lblError.setVisible(false);
+	addanswersbuttons();
+	lblError.setVisible(false);
 	lblOk.setVisible(false);
 	lblWarning.setVisible(false);
 	if(deflistmodel.isEmpty())
@@ -216,20 +227,23 @@ void init(){
 
 	resetScore();
 }
-
+/**
+ * ADD THE ANSWERS BUTTONS
+ */
 void addanswersbuttons(){
 	for(JButton jb:jbanswers){
 	panel_answ.add(jb);	}
 }
+/**
+ * REMOVE THE ANSWERS BUTTONS
+ */
 void removeanswersbuttons(){
 	for(JButton jb:jbanswers){
 		panel_answ.remove(jb);}
 	jbanswers.clear();
 }
 
-public void selectFile(){
-	//quizmultp.setDataFile(file_txt);
-}
+
 	
 void resetScore(){
 	score=0;

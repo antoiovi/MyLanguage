@@ -42,7 +42,16 @@ public int getNcarte() {
 }
 
 public void setNcarte(int ncarte) {
+	if(ncarte<=1)
+		return;
 	this.ncarte = ncarte;
+	mazzo.clear();
+	//mazzo=new Vector<Integer>();
+for(int x=0;x<ncarte;x++){
+	mazzo.add(x+1);
+}
+mescola();	
+	
 }
 
 public Vector<Integer> getMazzo() {

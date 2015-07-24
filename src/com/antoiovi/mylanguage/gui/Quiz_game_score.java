@@ -4,7 +4,11 @@ import java.awt.event.ActionEvent;
 
 import com.antoiovi.mylanguage.Quizword;
 import javax.swing.JLabel;
-
+/**
+ * 
+ * @author  Antonello Iovino
+ *
+ */
 public class Quiz_game_score extends Popupquiz {
 	boolean count_score=true;
 	int rightAnswers=0;
