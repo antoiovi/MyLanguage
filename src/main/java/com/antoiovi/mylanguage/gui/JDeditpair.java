@@ -129,8 +129,8 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 
 	/**
 	 * Create the dialog.
-	 * @param documentModal 
-	 * @param string 
+	 * @param documentModal
+	 * @param string
 	 */
 	public JDeditpair() {
 		addWindowListener(new WindowAdapter() {
@@ -138,7 +138,7 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 			public void windowClosing(WindowEvent arg0) {
 			}
 		});
-		
+
 		setBounds(100, 100, 648, 307);
 		getContentPane().setLayout(new BorderLayout());
 		{
@@ -159,20 +159,20 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 				button.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						try{
-							
+
 							Integer minuti=(Integer)spinner.getModel().getValue();
 							mylanguage.setTimePopsup(minuti);
 						mylanguage.Start_popups();
 						closeprogram();
 						}catch (Exception e){
-							
+
 						}
 																			}
 				});
-				
-	
-				
-				
+
+
+
+
 			}
 			{
 				JButton btnStartPopquiz = new JButton("Start popquiz");
@@ -231,13 +231,13 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 								int sr=table.getSelectedRow();
 								if(sr!=-1){
 									model.insertRow(sr+1, new Object[] { "", "" });
-								
+
 								}
 							} catch (java.lang.ArrayIndexOutOfBoundsException ex) {
 
 							}
-						
-							
+
+
 						}
 					});
 					{
@@ -250,7 +250,7 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 								model.cleanEmpty();
 								// notifica alla tabella che i dati sonoc ambiati
 								model.fireTableDataChanged();
-															
+
 							}
 						});
 						buttonPane.add(btnEliminaRigheVuote);
@@ -266,7 +266,7 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 								int sr=table.getSelectedRow();
 								if(sr!=-1){
 									model.insertRow(sr, new Object[] { "", "" });
-								
+
 								}
 							} catch (java.lang.ArrayIndexOutOfBoundsException ex) {
 
@@ -316,7 +316,7 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 								/***
 								 * TEST IF IS GOOD File
 								 */
-								if(mylanguage.setTextfile(file)){	
+								if(mylanguage.setTextfile(file)){
 									// File is a text file...other check is possible
 								 loadFile();
 								}
@@ -327,7 +327,7 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 						mntmNuovo = new JMenuItem("Nuovo");
 						mntmNuovo.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent e) {
-								// Prima di creare una nuova tabella verifica se il file corrente è stato salvato
+								// Prima di creare una nuova tabella verifica se il file corrente  stato salvato
 								if(changedData){
 									int n= JOptionPane.showConfirmDialog(null,
 											"Modifiche non salvate. Chiudere comunque?",
@@ -336,7 +336,7 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 									if(n==1){
 										return;
 									}
-							
+
 								}
 								//file salvato... creo nuovo
 								dialog.newFile();
@@ -364,7 +364,7 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 					mntmChiudi = new JMenuItem("Chiudi");
 					mntmChiudi.setActionCommand("Chiudi");
 					mntmChiudi.addActionListener(this);
-					
+
 					mnNewMenu.add(mntmChiudi);
 				}
 			}
@@ -380,15 +380,15 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 							Quizword	quizword=mylanguage.getQuizword();
 							quizgame=new Quiz_game();
 						 	quizgame.setQuizword(quizword);
-						 	
+
 						 	quizgame.setVisible(true);
-						 	
+
 						 	int exitbutton=quizgame.getClickButton();
 						} catch (Exception e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
-						 
+
 						}
 					});
 					mnPlay.add(mntmQuiz);
@@ -407,14 +407,14 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 							 		return;
 							 	}
 							 	quizgamescore.setVisible(true);
-							 	
+
 							 	int exitbutton=quizgamescore.getClickButton();
 							} catch (Exception e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
-							 
-							
+
+
 						}
 					});
 					mnPlay.add(mntmQuizScore);
@@ -429,7 +429,7 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 							JDQuizMultiple quizMultipleFrame=new JDQuizMultiple();
 							quizMultipleFrame.setModalityType(Dialog.ModalityType.DOCUMENT_MODAL);
 							quizMultipleFrame.setVisible(true);
-							
+
 						}
 					});
 					mnPlay.add(mntmQuizMultiple);
@@ -476,7 +476,7 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 			super(rowCount, columnCount);
 			// TODO Auto-generated constructor stub
 
-		
+
 		}
 		public void cleanEmpty(){
 			Iterator i=dataVector.iterator();
@@ -486,10 +486,10 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 				String s0=s.trim();
 				if(s0.isEmpty()){
 						i.remove();
-						
+
 						}
 			}
-			
+
 		}
 	}
 
@@ -497,7 +497,7 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 	public void tableChanged(TableModelEvent arg0) {
 		// TODO Auto-generated method stub
 		this.setChangedData(true);
-		
+
 	}
 
 	public boolean isChangedData() {
@@ -509,7 +509,7 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 		if(changedData){
 			this.mntmSave.setEnabled(true);
 		}else{
-			this.mntmSave.setEnabled(false);	
+			this.mntmSave.setEnabled(false);
 		}
 	}
 
@@ -537,7 +537,7 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 
 						Mymodel model = (Mymodel) table.getModel();
 						Vector righe = model.getDataVector();
-						
+
 						Iterator it = righe.iterator();
 						while (it.hasNext()) {
 							Vector riga=(Vector) it.next();
@@ -554,16 +554,16 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 							}
 						}
 						output.close();
-						
+
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-				
+
 					mntmSave.setEnabled(false);
 					this.setChangedData(false);
 					dialog.setTitle(file.getAbsolutePath());
-		
+
 		}else if(e.getActionCommand().equals("SaveWithName")){
 			JFileChooser jfilechooser = new JFileChooser();
 			jfilechooser.setDialogType(JFileChooser.SAVE_DIALOG);
@@ -574,14 +574,14 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 			} else {
 				return;
 			}
-		
+
 		try {
 			BufferedWriter output = new BufferedWriter(
 					new FileWriter(file));
 
 			Mymodel model = (Mymodel) table.getModel();
 			Vector righe = model.getDataVector();
-			
+
 			Iterator it = righe.iterator();
 			while (it.hasNext()) {
 				Vector riga=(Vector) it.next();
@@ -599,7 +599,7 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 			}
 			output.close();
 			dialog.setTitle(file.getAbsolutePath());
-			
+
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -619,18 +619,18 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 			this.closeprogram();
 			System.exit(1);
 		//	this.setVisible(false);
-			
+
 		}
 	}
-	
-	
+
+
 	/**
 	 * LOAD PROPERTIES
 	 */
 	private void loadproperties() {
 		InputStream inputProp = null;
 		try {
-		
+
 			inputProp = MyProperties.getInstance().inputStreamProperties();
 			if (inputProp != null) {
 				properties.load(inputProp);
@@ -650,7 +650,7 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 		}
 
 	}
-	
+
 	private boolean loadFile(){
 		try {
 			dati = mylanguage.getPairKeyWord(file);
@@ -666,8 +666,8 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 		this.setChangedData(false);
 		return true;
 	}
-	
-	
+
+
 	public void newFile(){
 		Vector PairKeyWord=new Vector<Vector<Object>>();
 		for(int x=0;x<10;x++){
@@ -685,9 +685,9 @@ public class JDeditpair extends JDialog implements ActionListener,TableModelList
 		mylanguage.setTextfile(null);
 		file=null;
 		this.setChangedData(false);
-	
+
 	}
-	
+
 	private void closeprogram(){
 		OutputStream output = null;
 		try {
