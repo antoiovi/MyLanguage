@@ -14,6 +14,25 @@ import com.antoiovi.mylanguage.Mazzocarte;
 import com.antoiovi.mylanguage.MylUtility;
 import com.antoiovi.mylanguage.QuestionAnswer;
 
+
+/**
+ * 
+ * @author antoiovi Antonello Iovino
+ * 
+ * Questa classe ha un array di stringhe (Vector <String>) che viene
+ * recuperata tramite il metodo  	
+ * public List<String> getSentences() 
+ * 	che le restituisce in ordine sempre diverso (vengono mescolate ogni volta che 
+ * 	si chiama il metodo).
+ * 
+ * Le stringhe (frasi) vengono inzzializzate tramite il metodo
+ * public boolean setDataFile(File file_)
+ * 	che prima verifica il tipo di file
+ * 
+ * 
+ * 
+ *
+ */
 public class OrderSentence {
 Vector<String> sentences_list;
 
@@ -83,6 +102,15 @@ private File file;
 		return sentences;
 	}
 	
+	/**
+	 * Inizzializza il Vector<String> sentences da un file
+	 * il file deve essere verificato nel metodo 
+	 * public boolean setDataFile(File file_)
+	 * 
+	 * che se ha successo richiama questo metodo.
+	 * 
+	 * @return true, se l'inizzializzazione ha avuto successo
+	 */
 	private boolean inizializeFromFile(){
 		sentences_list.clear();
 		int count=0;
