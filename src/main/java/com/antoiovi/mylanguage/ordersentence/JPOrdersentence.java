@@ -16,11 +16,16 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.LongToDoubleFunction;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
@@ -134,6 +139,7 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 				answert.bordered = false;
 			} else {
 				answert.text = String.format("%-10s", tokens[count]).replace(' ', '.');
+				 
 				answert.visible = false;
 				answert.bordered = true;
 			}
@@ -192,16 +198,15 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 		}
 		repaint();
 	}
-	
+
 	Color COLOR_BACKGROUND = Color.white;
 	Color COLOR_FOREGROUND = Color.black;
-
 
 	Color COLOR_RANDOM_WORDS = Color.blue;
 	Color COLOR_ANSWERED_WORD = Color.green;
 	Color COLOR_BORDER_ANSWER = Color.orange;
 
-	/****************
+	/******************************************************************
 	 * METODO PAINT
 	 */
 	@Override
@@ -216,7 +221,7 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 		FontRenderContext frc = g2d.getFontRenderContext();
 		// Font font=g2d.getFont();
 		Font font = new Font(null, Font.PLAIN, 20);
-	
+
 		/**
 		 * PAINT QUESTIONS...........
 		 */
@@ -242,7 +247,7 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 
 			}
 		}
-		// Reimposta il colore 
+		// Reimposta il colore
 		g2d.setColor(COLOR_FOREGROUND);
 		g2d.setBackground(COLOR_BACKGROUND);
 
@@ -251,7 +256,7 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 		/****************************************************************
 		 * draw the ANSWERS...
 		 */
-		
+
 		for (RandomToken rt_answ : answerTokenList) {
 			if (rt_answ.text == null || rt_answ.text.isEmpty())
 				continue;
@@ -322,8 +327,9 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 
 	}
 
-	/***
-	 * Mouse events
+	/************************************************************************************
+	 * Mouse events 1 PRESSED --> 2 REALISED --> 3 CLICKED Oppure PRESSED -->DRAGGED
+	 * --> Realised
 	 */
 	boolean pressOut = false;
 	int preX, preY;
@@ -332,8 +338,12 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
+		// Lavora solo con il bottone sinistro
+		if (!SwingUtilities.isLeftMouseButton(e))
+			return;
+
 		if (!pressOut)
-			updateLocation(e);
+			updateLocation(e.getPoint());
 
 	}
 
@@ -343,29 +353,20 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 
 	}
 
-	@Override
-	public void mouseClicked(MouseEvent event) {
-		// Do nothing
-
-		  if (event.getClickCount() == 2) {
-		    System.out.println("double clicked");
-		  }
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		// Do nothing
-	}
-
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-		// Do nothing
-	}
-
 	RandomToken selectedToken = null;
+	int mouseButton;
+
+	/****
+	 * Mouse events 1 PRESSED --> 2 REALISED --> 3 CLICKED Oppure PRESSED -->DRAGGED
+	 * --> Realised
+	 */
+
+	Point pressedPoint;
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+
+		pressedPoint = e.getPoint();
 		// Controlla se il punto selezionato contiene una parola della frase
 		selectedToken = containsToken(e.getX(), e.getY());
 		// pressOut : serve nel metodo mouseDragged :
@@ -381,9 +382,87 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 		} else {
 			pressOut = true;
 		}
-
 		printDebug("Press out=" + pressOut);
 
+	}
+
+	/**
+	 * Mouse events 1 PRESSED --> 2 REALISED --> 3 CLICKED Oppure PRESSED -->DRAGGED
+	 * --> Realised
+	 */
+	/**
+	 * Mouse rilasciato
+	 */
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// 'E stato tracinato ?
+		// pressedPoint inizzializzato nel metodo MoudePressed
+		if (e.getPoint().equals(pressedPoint))
+			return;
+		// Se e stato trascinato in altro punto(dragged) allora :
+		// PRESSED -->DRAGGED --> Realised
+		printDebug("MouseRealised in different point ");
+		checkIfRealisedInRightPosition(e.getPoint());
+	}
+
+	private int clickCount;
+	private boolean doubleClick;
+	private Timer timer;
+
+	/****
+	 * Mouse events 1 PRESSED --> 2 REALISED --> 3 CLICKED Oppure PRESSED -->DRAGGED
+	 * --> Realised
+	 */
+	@Override
+	public void mouseClicked(MouseEvent mevt) {
+
+		/**
+		 * Questo ciclo serve per identificare un doppio click da un singolo click
+		 */
+		;
+//		if (SwingUtilities.isRightMouseButton( mevt)) {
+		if (SwingUtilities.isLeftMouseButton(mevt)) {
+			clickCount = 0;
+			if (mevt.getClickCount() == 2)
+				doubleClick = true;
+			Integer timerinterval = (Integer) Toolkit.getDefaultToolkit().getDesktopProperty("awt.multiClickInterval");
+
+			timer = new Timer(timerinterval, new ActionListener() {
+
+				public void actionPerformed(ActionEvent evt) {
+					if (doubleClick) {
+
+						System.out.println("Double click.");
+
+						clickCount++;
+						if (clickCount == 2) {
+							execDoubleclick();
+							clickCount = 0;
+							doubleClick = false;
+						}
+
+					} else {
+
+						System.out.println("Single click.");
+					}
+				}
+			});
+			timer.setRepeats(false);
+			timer.start();
+			if (mevt.getID() == MouseEvent.MOUSE_RELEASED)
+				timer.stop();
+
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// Do nothing
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// Do nothing
 	}
 
 	/**
@@ -407,39 +486,43 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 	}
 
 	/**
-	 * Chiamat da mouseDragged : aggiorna la posizione della parola selezionata
+	 * Chiamato da mouseDragged : aggiorna la posizione della parola selezionata
 	 * 
-	 * @param e
+	 * @param point
 	 */
-	public void updateLocation(MouseEvent e) {
+	public void updateLocation(Point point) {
 		if (selectedToken == null)
 			return;
-		selectedToken.loc = new Point(e.getX(), e.getY());
-		// rect.setLocation(preX + e.getX(), preY + e.getY());
-
-		/**
-		 * if (checkRect()) { ShapeMover.label.setText(rect.getX() + ", " +
-		 * rect.getY()); } else { ShapeMover.label.setText("drag inside the area."); }
-		 */
+		selectedToken.loc = new Point(point);
 		repaint();
 	}
 
 	/**
-	 * Mouse rilasciato
+	 * Se il punto appartiene ad una risposta restituisce la risposta (come
+	 * RandomToken)
+	 * 
+	 * @param point
+	 * @return
 	 */
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// int relX=e.getX();
-		// int relY=e.getY();
-
+	RandomToken getClickeAnswer(Point point) {
 		RandomToken answTokselec = null;
 		// check if mouse is realised on an answer
 		for (RandomToken answ : answerTokenList) {
-			if (answ.rect.contains(e.getPoint())) {
+			if (answ.rect.contains(point)) {
 				answTokselec = answ;
 				break;
 			}
 		}
+		return answTokselec;
+	}
+
+	/**
+	 * Chiamato dopo rilascio del mouse da mouseRealised() a seguito di un dragged
+	 * 
+	 * @param point Il punto dove 'e stato rilasciato il mouse
+	 */
+	void checkIfRealisedInRightPosition(Point point) {
+		RandomToken answTokselec = getClickeAnswer(point);
 		/**
 		 * selected a random word and a answer box: try to see if matches:
 		 */
@@ -467,8 +550,8 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 			 * A selected word was realised outside an answer box; Restore the position
 			 */
 			if (easyOption) {
-				if (quizarea.contains(e.getPoint())) {
-					selectedToken.loc.setLocation(e.getPoint());
+				if (quizarea.contains(point)) {
+					selectedToken.loc.setLocation(point);
 				} else {
 					Point2D prev = new Point(preX, preY);
 					selectedToken.loc.setLocation(prev);
@@ -482,13 +565,45 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 		repaint();
 	}
 
+	/**
+	 * Chiamato dopo un doppio click
+	 */
+	void execDoubleclick() {
+		printDebug("++++++ Exec double click");
+		if (!pressOut) {
+			printDebug("++++++ Nod pressOut"+selectedToken.text);
+
+			RandomToken answTokselec=null;
+			if (selectedToken != null) {
+				String text=String.format("%-10s",selectedToken.text).replace(' ', '.');
+				for (RandomToken answ : answerTokenList) {
+				//	printDebug("++++++ Nod pressOut answToselekt"+answ.text);
+
+					if (answ.text.equals(text) ){
+						answTokselec = answ;
+						break;
+					}
+					
+				}
+				if(answTokselec!=null) {
+					printDebug("++++++ Nod pressOut answToselekt"+answTokselec.text);
+
+				selectedToken.visible = false;
+				answTokselec.visible = true;
+				//rightAnswer();
+				repaint();
+				}
+				
+			}
+		}
+	}
 
 	@Override
 	public Dimension getPreferredSize() {
 		return new Dimension(maxWidth, bottom);
 	}
 
-	/*****
+	/******************************************************
 	 * Mischia le parole nel rettangolo superiore :
 	 */
 	public void shake() {
@@ -539,7 +654,7 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 	}
 
 	/**********************************
-	 * SETTER GETTERS 
+	 * SETTER GETTERS
 	 */
 	/********
 	 * @return quiz la quizinteafec
@@ -560,7 +675,6 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 		this.quiz = quiz;
 	}
 
-	
 	public boolean isEasyOption() {
 		return easyOption;
 	}
