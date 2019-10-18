@@ -129,14 +129,12 @@ public class JDOrderSentence extends JDialog implements Quizinterface {
 
 		lblScore = new JLabel("New label");
 		panel_1.add(lblScore);
-		/***********
-		 * previous
-		 */
-		JButton btnPrev = new JButton("<<");
+		btnPrev = new JButton("<<");
 		btnPrev.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				index--;
 				index = (index == -1 ? 0 : index);
+				btnPrev.setVisible(index>0);
 				resetSentence();
 
 			}
@@ -149,7 +147,7 @@ public class JDOrderSentence extends JDialog implements Quizinterface {
 		btnNext.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				index++;
-				index = index >= sentences.size() ? (sentences.size() - 1) : index;
+				index = index >= sentences.size() ? 0 : index;
 				// System.out.println(String.format("sentences.size= %d \t index= %d",
 				// sentences.size(),index));
 				resetSentence();
@@ -221,6 +219,7 @@ public class JDOrderSentence extends JDialog implements Quizinterface {
  * in base all indice
  */
 	void resetSentence() {
+		
 		panel_ordsent.configSentence(sentences.get(index));
 		lblNotification.setText(sentences.get(index));
 		score = 0;
@@ -254,6 +253,9 @@ public class JDOrderSentence extends JDialog implements Quizinterface {
 	int rightansw = 0;
 	private JLabel lblScore;
 	private Button btnShake;
+
+
+	private JButton btnPrev;
 
 	/**
 	 * Aggiorna il testo di informazione delle domande giuste e sbagliate
