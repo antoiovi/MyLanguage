@@ -278,6 +278,7 @@ public class JDOrderSentence extends JDialog implements Quizinterface {
 	@Override
 	public void wrongAnswer() {
 		wrongans++;
+		rightansw--;
 		updatescore();
 	}
 

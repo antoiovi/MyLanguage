@@ -43,7 +43,7 @@ private File file;
 		this.file=file_;
 		sentences_list=new Vector<String>();
 		if(file==null){
-		String sentence=  "This is a random sentence , try to catch it ciao ciao marameo !!";
+			String sentence=  "This ciao ciao";
 		for (int x = 0; x < 5; x++) {
 			sentence=sentence.concat("word "+x);
 			sentences_list.add(sentence);
@@ -63,10 +63,10 @@ private File file;
 	}
 	public OrderSentence(){
 		sentences_list=new Vector<String>();
-		 
-		String sentence=  "This is a random sentence , try to catch it ciao ciao marameo !!";
+		String sentence=  "1 questa e una 1 frase prova a indovinare 2 frase se sei capace ";
+
 		for (int x = 0; x < 5; x++) {
-			sentence=sentence.concat("word "+x);
+		//	sentence=sentence.concat("word "+x);
 			sentences_list.add(sentence);
 		}
 		 

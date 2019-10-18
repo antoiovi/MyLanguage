@@ -32,6 +32,43 @@ import java.awt.event.MouseMotionListener;
 /***
  * Pannello di gioco.
  * 
+ * - Dispone una lista di parole sulla parte superiore del pannello () 
+ * 			in ordine sparso :
+ * 			parte superiore -->	Rectangle2D quizarea;
+ * 			parole sparese  --> randomsTokenList
+ * - La stessa lista di parole 'e disposta in modo ordinato nella arte inferiore del 
+ * 		pannello :
+ * 			parte inferiore --> 	Rectangle2D answarea;
+ * 			parole ordinate -->	List<RandomToken> answerTokenList;
+
+ * INIZZIALIZZZIONE ;
+ * 
+ *  Metodo   public void configSentence(String Sentence) 
+ * 		 inizzializza il pannello con le parole (che costituiscono una frase)
+ * 
+ *	 Metodo 	public void shake() {
+ * 		mescola le parole sul pannello superiore 
+ * 
+ * OPZIONI :
+ * 	boolean easyOption = false;
+ * 	Se true : 
+ * 		1) e possibile disporre le parole sul pannenllo superiore senza che segnali errore
+ * 		2) se doppio click su una parola del pannello superiore 
+ * 			la posiziona nella giusta posizione  e chiama il metodo wronganswer()
+ * 			(perche 'e considerato un aiuto quindoi il punteggio dovrebbe essere diminuito anche se larisposta
+ * 			e esatta )
+ * 
+ * 
+ * EVENTI ;
+ * -- 'E possibile trascinare con il mouse una parola dalla parte superiore (parole in ordine sparso)
+ *     Se viene rilasciata nella giusta posizione (nella parte inferiore dove sono disposte 
+ *     	in modo ordinato) viene cancellata dalla parte superiore ed inserita (Resa visibile) nella
+ *      parte inferiore
+ *      
+ *   -- Si interfaccia con il mondo esterno tramite la variabile :
+ *     	Quizinterface quiz;
+ *       che deve essere inizzializzata nel pannello padre.
+ * 
  * @author antoiovi
  *
  */
@@ -49,12 +86,14 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 	 * token rappresenta UNA PAROLA
 	 * 
 	 */
-	List<RandomToken> randomsTokenList;
-	List<RandomToken> answerTokenList;
+	List<SentenceWord> wordsToDragList;
+	List<SentenceWord> sentenceWordsList;
 
 	int margin = 5;
 	/**
-	 * if easy option i can ordinate the word on the desk...
+	 *   easyOption
+	 *	 1) if easy option i can ordinate the word on the desk...
+	 *	 2) Se doppio click su una parola, la posiziona nel posto giusto
 	 */
 	boolean easyOption = false;
 
@@ -72,6 +111,10 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 	 */
 	int minim_lgh_vis = 2;
 
+	
+	boolean RANDOM_WORD_IS_BORDERD=false;
+	boolean ANSWERED_WORD_IS_BORDERD=true;
+
 	/**
 	 * Create the panel.
 	 */
@@ -81,8 +124,8 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 		addMouseListener(this);
 		// super.setB
 		// RandomToken :incapsula una stringa con i parametri per la visualizzazione
-		randomsTokenList = new ArrayList<RandomToken>();
-		answerTokenList = new ArrayList<>();
+		wordsToDragList = new ArrayList<SentenceWord>();
+		sentenceWordsList = new ArrayList<>();
 		setBackground(Color.WHITE);
 		// Inizzializza le aree
 		quizarea = new Rectangle(0, 0, maxWidth, maxHeight);
@@ -111,42 +154,42 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 		/**
 		 * Clear the lists
 		 */
-		randomsTokenList.clear();
-		answerTokenList.clear();
+		wordsToDragList.clear();
+		sentenceWordsList.clear();
 		int Min = 0 + margin;
 		int Max = maxWidth - margin;
 		tokens = sentence.split(" ");
 		int answ_base_X = (int) answarea.getX() + margin;
 
-		// Answeres lines
+		// Answeres lines : numero di linee su cui disporre il testo delle risposte
 		int answ_lines = 0;
 		for (int count = 0; count < tokens.length; count++) {
-			RandomToken rt = new RandomToken();
-			RandomToken answert = new RandomToken();
+			SentenceWord wordToDrug = new SentenceWord();
+			SentenceWord wordInPosition = new SentenceWord();
 			/**
 			 * Set the text and the position to question(random) and answer
 			 */
-			rt.text = String.format("%-10s", tokens[count]);
-			rt.val = count;
+			wordToDrug.text = String.format("%-10s", tokens[count]);
+			wordToDrug.val = count;
 
-			answert.val = count;
+			wordInPosition.val = count;
 			/**
 			 * ANSWER : NOT VISIBLE? depends if its too short !
 			 */
 			if (tokens[count].length() <= minim_lgh_vis) {
-				answert.visible = true;
-				answert.text = tokens[count];
-				answert.bordered = false;
+				wordInPosition.visible = true;
+				wordInPosition.text = tokens[count];
+				wordInPosition.bordered = ANSWERED_WORD_IS_BORDERD;
 			} else {
-				answert.text = String.format("%-10s", tokens[count]).replace(' ', '.');
+				wordInPosition.text = String.format("%-10s", tokens[count]).replace(' ', '.');
 				 
-				answert.visible = false;
-				answert.bordered = true;
+				wordInPosition.visible = false;
+				wordInPosition.bordered = true;
 			}
 
 			// get the advance of my text in this font
 			// and render context
-			int adv = metrics.stringWidth(answert.text);
+			int adv = metrics.stringWidth(wordInPosition.text);
 			// calculate the size of a box to hold the
 			// text with some padding.
 			Dimension size = new Dimension(adv + 2, hgt + 2);
@@ -154,7 +197,11 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 			 * answerToken is not random position
 			 */
 			// int baseline=(int)answarea.getY()+margin+size.height;
-
+			/* 
+			 *  Se la parola ha il bordo sinistro che 'e maggiore della larghezza del pannello
+			 *  va a capo (mette la parola su una linea inferiore.
+			 * 
+			 */
 			if ((answ_base_X + size.width + margin) > maxWidth) {
 				answ_base_X = (int) answarea.getX() + margin;
 				answ_lines++;
@@ -166,11 +213,13 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 			Rectangle2D rect = new Rectangle(answ_base_X, answ_base_Y, size.width, size.height);
 
 			Point2D pa = new Point(answ_base_X, answ_base_Y);
-			answert.rect = rect;
-			answert.loc = pa;
+			wordInPosition.rect = rect;
+			wordInPosition.loc = pa;
+			
+			wordInPosition.log();
 			// Aggiunge la parola nella lista delle risposte
-			answerTokenList.add(answert);
-			answ_base_X += size.width + margin;
+			sentenceWordsList.add(wordInPosition);
+			answ_base_X += (size.width + margin);
 			/**
 			 * Random token has RANDOM position
 			 */
@@ -186,25 +235,106 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 			int randomY = MinY + (int) (Math.random() * ((MaxY - MinY) + 1));
 
 			Point2D p = new Point(randomX, randomY);
-			rt.loc = p;
-			rt.bordered = false;
+			wordToDrug.loc = p;
+			wordToDrug.bordered = RANDOM_WORD_IS_BORDERD;
 			/**
 			 * if too short show in the answers...
 			 */
-			rt.visible = (tokens[count].length() <= minim_lgh_vis) ? false : true;
-			if (!rt.visible)
-				rt.rect = answert.rect;
-			randomsTokenList.add(rt);
+			wordToDrug.visible = (tokens[count].length() <= minim_lgh_vis) ? false : true;
+			if (!wordToDrug.visible)
+				wordToDrug.rect = wordInPosition.rect;
+			wordsToDragList.add(wordToDrug);
 		}
 		repaint();
 	}
 
-	Color COLOR_BACKGROUND = Color.white;
-	Color COLOR_FOREGROUND = Color.black;
+	void log(String s) {
+		System.out.println(s);
+	}
+	void inizilizeAnswerPositions(String [] tokens,Font font, FontMetrics metrics) {
+		int hgt = metrics.getHeight();
+		int answ_base_X = (int) answarea.getX() + margin;
+		// Answeres lines : numero di linee su cui disporre il testo delle risposte
+		int answ_lines = 0;
+		
+		for (int count = 0; count < tokens.length; count++) {
+			SentenceWord wordToDrag = new SentenceWord();
+			SentenceWord wordInRightPosition = new SentenceWord();
+			/**
+			 * Set the text and the position to question(random) and answer
+			 */
+			wordToDrag.text = String.format("%-10s", tokens[count]);
+			wordToDrag.val = count;
 
+			wordInRightPosition.val = count;
+			/**
+			 * ANSWER : NOT VISIBLE? depends if its too short !
+			 */
+			if (tokens[count].length() <= minim_lgh_vis) {
+				wordInRightPosition.visible = true;
+				wordInRightPosition.text = tokens[count];
+				wordInRightPosition.bordered = ANSWERED_WORD_IS_BORDERD;
+			} else {
+				wordInRightPosition.text = String.format("%-10s", tokens[count]).replace(' ', '.');
+				 
+				wordInRightPosition.visible = false;
+				wordInRightPosition.bordered = true;
+			}
+
+			// get the advance of my text in this font
+			// and render context
+			int adv = metrics.stringWidth(wordInRightPosition.text);
+			// calculate the size of a box to hold the
+			// text with some padding.
+			Dimension size = new Dimension(adv + 2, hgt + 2);
+			/**
+			 * answerToken is not random position
+			 */
+			// int baseline=(int)answarea.getY()+margin+size.height;
+			/* 
+			 *  Se la parola ha il bordo sinistro che 'e maggiore della larghezza del pannello
+			 *  va a capo (mette la parola su una linea inferiore.
+			 * 
+			 */
+			if ((answ_base_X + size.width + margin) > maxWidth) {
+				answ_base_X = (int) answarea.getX() + margin;
+				answ_lines++;
+				// System.out.println("line +1-->"+answ_lines);
+			}
+			int answ_base_Y = (int) answarea.getY() + margin + hgt;
+			// not yet checked bottom over border....
+			answ_base_Y = answ_base_Y + answ_lines * (size.height + margin);
+			Rectangle2D rect = new Rectangle(answ_base_X, answ_base_Y, size.width, size.height);
+
+			Point2D pa = new Point(answ_base_X, answ_base_Y);
+			wordInRightPosition.rect = rect;
+			wordInRightPosition.loc = pa;
+			// Aggiunge la parola nella lista delle risposte
+			sentenceWordsList.add(wordInRightPosition);
+			answ_base_X += (size.width + margin);
+		}
+	}
+	
+	
+	/****************************
+	 * COLORI PANNELLO SUPERIORE
+	 */
+	//Color COLOR_BACKGROUND = Color.white;
+	//Color COLOR_BACKGROUND_B = Color.red;
+	// colore sfondo
+	Color COLOR_RANDOMWORDS_AREA = Color.green;
+	// Colore testo domande sparese
 	Color COLOR_RANDOM_WORDS = Color.blue;
-	Color COLOR_ANSWERED_WORD = Color.green;
-	Color COLOR_BORDER_ANSWER = Color.orange;
+	
+	/****************************
+	 * COLORI PANNELLO SOTTOSTANTE
+	 */
+	// colore sfondo
+	Color COLOR_ANSWER_AREA = Color.LIGHT_GRAY;
+	//Colore testo 
+	Color COLOR_ANSWERED_WORD = Color.BLACK;
+	// colore bordo domande
+	Color COLOR_BORDER_ANSWER = Color.white;
 
 	/******************************************************************
 	 * METODO PAINT
@@ -213,78 +343,79 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D) g;
-		g2d.setColor(COLOR_FOREGROUND);
-		g2d.setBackground(COLOR_BACKGROUND);
-		Color savecolor = g2d.getColor();
-		g2d.draw(answarea);
-		g2d.draw(quizarea);
+		g2d.setColor(COLOR_ANSWER_AREA);
+		//g2d.setBackground(COLOR_BACKGROUND_B);
+		
+		g2d.fill(answarea);
+		
+		g2d.setColor(COLOR_RANDOMWORDS_AREA);
+		//g2d.setBackground(COLOR_BACKGROUND);
+		g2d.fill(quizarea);
+		//g2d.draw(quizarea);
+		
+		g2d.setColor(COLOR_RANDOM_WORDS);
+
 		FontRenderContext frc = g2d.getFontRenderContext();
 		// Font font=g2d.getFont();
 		Font font = new Font(null, Font.PLAIN, 20);
 
 		/**
-		 * PAINT QUESTIONS...........
+		 * PAINT QUESTIONS. WORD TO DRAG..........
 		 */
 		// Imposta il COLORE delle PAROLE CASUALI
 		g2d.setColor(COLOR_RANDOM_WORDS);
 		int count_words = 0;
-		for (RandomToken rt_question : randomsTokenList) {
+		for (SentenceWord rt_question : wordsToDragList) {
 			if (rt_question.text == null || rt_question.text.isEmpty())
 				continue;
 			if (rt_question.visible) {
 				count_words++;
 				TextLayout layout = new TextLayout(rt_question.text, font, frc);
 				Point2D loc = rt_question.loc;
+				g2d.setColor(COLOR_RANDOM_WORDS);
 				layout.draw(g2d, (float) loc.getX(), (float) loc.getY());
-				// g2d.drawLine(0,0,(int) loc.getX(), (int)loc.getY());
-				// System.out.println("X Y ="+(int) loc.getX()+" " +(int)loc.getY());
 				Rectangle2D bounds = layout.getBounds();
 				bounds.setRect(bounds.getX() + loc.getX(), bounds.getY() + loc.getY(), bounds.getWidth(),
 						bounds.getHeight());
 				rt_question.rect = bounds;
-				if (rt_question.bordered)
+				if (rt_question.bordered) {
+					g2d.setColor(COLOR_BORDER_ANSWER);
 					g2d.draw(rt_question.rect);
+				}
 
 			}
 		}
-		// Reimposta il colore
-		g2d.setColor(COLOR_FOREGROUND);
-		g2d.setBackground(COLOR_BACKGROUND);
 
 		// words finished ...
 		notificationREAMAININGS_WORDS(count_words);
 		/****************************************************************
-		 * draw the ANSWERS...
+		 * draw the ANSWERS...WORDS IN RIGHT POSITION
 		 */
-
-		for (RandomToken rt_answ : answerTokenList) {
-			if (rt_answ.text == null || rt_answ.text.isEmpty())
+		for (SentenceWord wordInRightP : sentenceWordsList) {
+			if (wordInRightP.text == null || wordInRightP.text.isEmpty())
 				continue;
-			TextLayout textLayout = new TextLayout(rt_answ.text, font, frc);
-			Point2D loc = rt_answ.loc;
-			if (rt_answ.visible) {
-				// printDebug("Answer VISIBLE");
+			//wordInRightP.log();
+
+			TextLayout textLayout = new TextLayout(wordInRightP.text, font, frc);
+			Point2D loc = wordInRightP.loc;
+			if (wordInRightP.visible) {
 				g2d.setColor(COLOR_ANSWERED_WORD);
 				textLayout.draw(g2d, (float) loc.getX(), (float) loc.getY());
-				// layout.draw(g2d, (float)(rt.rect.getMaxX()-rt.rect.getWidth()), (float)
-				// rt.rect.getMinY());
-			} else {
-				// printDebug("Answer NOT VISIBLE");
-				g2d.setColor(COLOR_BACKGROUND);
-				g2d.setBackground(COLOR_BACKGROUND);
-				// printDebug("RED. Answer= "+rt_answ.text);
-				// printDebug("Visible = "+rt_answ.visible);
+				} else {
+				g2d.setColor(COLOR_ANSWER_AREA);
 				textLayout.draw(g2d, (float) loc.getX(), (float) loc.getY());
-				g2d.setColor(COLOR_FOREGROUND);
-				g2d.setBackground(COLOR_BACKGROUND);
+				
 			}
 			Rectangle2D bounds = textLayout.getBounds();
-			bounds.setRect(bounds.getX() + loc.getX(), bounds.getY() + loc.getY(), bounds.getWidth(),
-					bounds.getHeight());
-			rt_answ.rect = bounds;
-			g2d.setColor(COLOR_BORDER_ANSWER);
-			if (rt_answ.bordered)
-				g2d.draw(rt_answ.rect);
+			
+			bounds.setRect(bounds.getX() + loc.getX()-5, bounds.getY() + loc.getY()-5, bounds.getWidth()+5,
+					bounds.getHeight()+5);
+			wordInRightP.rect = bounds;
+			if (wordInRightP.bordered) {
+				g2d.setColor(COLOR_BORDER_ANSWER);
+				g2d.draw(wordInRightP.rect);
+				}
+				
 		}
 
 	}
@@ -316,7 +447,7 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 	 *         Bounds pont2d etc, etc
 	 *
 	 */
-	private class RandomToken {
+	private class SentenceWord {
 		public String text;
 
 		public Rectangle2D rect;
@@ -324,6 +455,14 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 		public boolean visible = true;
 		public int val = 0;
 		public boolean bordered = true;
+		
+		public boolean equals(SentenceWord sw) {
+			return this.val==sw.val;
+		}
+		public void log() {
+			System.out.println(text);
+			System.out.println("Visble : "+visible);
+		}
 
 	}
 
@@ -353,7 +492,7 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 
 	}
 
-	RandomToken selectedToken = null;
+	SentenceWord selectedWord = null;
 	int mouseButton;
 
 	/****
@@ -368,17 +507,17 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 
 		pressedPoint = e.getPoint();
 		// Controlla se il punto selezionato contiene una parola della frase
-		selectedToken = containsToken(e.getX(), e.getY());
+		selectedWord = containsToken(e.getX(), e.getY());
 		// pressOut : serve nel metodo mouseDragged :
 		// infatti se ho selezionato una parola devo trascinarla nello schermo
-		if (selectedToken != null) {
+		if (selectedWord != null) {
 			printDebug("Selected token. pressOut = " + pressOut);
-			printDebug("Selected token. VISIBLE = " + selectedToken.visible);
+			printDebug("Selected token. VISIBLE = " + selectedWord.visible);
 			pressOut = false;
 			// preX PreY : salvo la posizione, se rilascio nel posto sbagliato
 			// la riposiziono nel posto originale
-			preX = (int) selectedToken.loc.getX();
-			preY = (int) selectedToken.loc.getY();
+			preX = (int) selectedWord.loc.getX();
+			preY = (int) selectedWord.loc.getY();
 		} else {
 			pressOut = true;
 		}
@@ -402,7 +541,7 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 		// Se e stato trascinato in altro punto(dragged) allora :
 		// PRESSED -->DRAGGED --> Realised
 		printDebug("MouseRealised in different point ");
-		checkIfRealisedInRightPosition(e.getPoint());
+		execMouseDraggedRealised(e.getPoint());
 	}
 
 	private int clickCount;
@@ -410,17 +549,16 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 	private Timer timer;
 
 	/****
-	 * Mouse events 1 PRESSED --> 2 REALISED --> 3 CLICKED Oppure PRESSED -->DRAGGED
-	 * --> Realised
+	 * Mouse events
+	 *  1 PRESSED --> 2 REALISED --> 3 CLICKED 
+	 *  Oppure 
+	 *  1 PRESSED --> 2 DRAGGED --> 3 Realised
 	 */
 	@Override
 	public void mouseClicked(MouseEvent mevt) {
-
 		/**
 		 * Questo ciclo serve per identificare un doppio click da un singolo click
 		 */
-		;
-//		if (SwingUtilities.isRightMouseButton( mevt)) {
 		if (SwingUtilities.isLeftMouseButton(mevt)) {
 			clickCount = 0;
 			if (mevt.getClickCount() == 2)
@@ -451,7 +589,6 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 			timer.start();
 			if (mevt.getID() == MouseEvent.MOUSE_RELEASED)
 				timer.stop();
-
 		}
 	}
 
@@ -474,8 +611,8 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 	 * @param y
 	 * @return
 	 */
-	RandomToken containsToken(int x, int y) {
-		for (RandomToken rt : randomsTokenList) {
+	SentenceWord containsToken(int x, int y) {
+		for (SentenceWord rt : wordsToDragList) {
 			if (rt.rect.contains(x, y)) {
 				System.out.println("SELECTED  " + rt.text);
 				return rt;
@@ -491,9 +628,9 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 	 * @param point
 	 */
 	public void updateLocation(Point point) {
-		if (selectedToken == null)
+		if (selectedWord == null)
 			return;
-		selectedToken.loc = new Point(point);
+		selectedWord.loc = new Point(point);
 		repaint();
 	}
 
@@ -504,10 +641,10 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 	 * @param point
 	 * @return
 	 */
-	RandomToken getClickeAnswer(Point point) {
-		RandomToken answTokselec = null;
+	SentenceWord getClickeAnswer(Point point) {
+		SentenceWord answTokselec = null;
 		// check if mouse is realised on an answer
-		for (RandomToken answ : answerTokenList) {
+		for (SentenceWord answ : sentenceWordsList) {
 			if (answ.rect.contains(point)) {
 				answTokselec = answ;
 				break;
@@ -521,44 +658,44 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 	 * 
 	 * @param point Il punto dove 'e stato rilasciato il mouse
 	 */
-	void checkIfRealisedInRightPosition(Point point) {
-		RandomToken answTokselec = getClickeAnswer(point);
+	void execMouseDraggedRealised(Point point) {
+		SentenceWord fixedpositionWordSelected = getClickeAnswer(point);
 		/**
 		 * selected a random word and a answer box: try to see if matches:
 		 */
-		if (selectedToken != null && answTokselec != null) {
-			if (selectedToken.val == answTokselec.val) {
+		if (selectedWord != null && fixedpositionWordSelected != null) {
+			if (selectedWord.val == fixedpositionWordSelected.val) {
 				System.out.println("BRAVO MATCHING!");
 				// selectedToken.rect=answTokselec.rect;
-				selectedToken.visible = false;
-				printDebug(String.format("answTokselec %s \t visible %s \t X= %f \t Y=%f", answTokselec.text,
-						answTokselec.visible, answTokselec.loc.getX(), answTokselec.loc.getY()));
-				answTokselec.visible = true;
+				selectedWord.visible = false;
+				printDebug(String.format("answTokselec %s \t visible %s \t X= %f \t Y=%f", fixedpositionWordSelected.text,
+						fixedpositionWordSelected.visible, fixedpositionWordSelected.loc.getX(), fixedpositionWordSelected.loc.getY()));
+				fixedpositionWordSelected.visible = true;
 				rightAnswer();
 			} else {
 				/**
 				 * A word is positionated on a wrong answer box! restore position...
 				 */
 				Point2D prev = new Point(preX, preY);
-				selectedToken.loc.setLocation(prev);
+				selectedWord.loc.setLocation(prev);
 				wrongAnswer();
 				// System.out.println("NOT MATCHING!");
 			}
-		} else if (selectedToken != null) {
+		} else if (selectedWord != null) {
 			System.out.println("NOT IN BOX!");
 			/**
 			 * A selected word was realised outside an answer box; Restore the position
 			 */
 			if (easyOption) {
 				if (quizarea.contains(point)) {
-					selectedToken.loc.setLocation(point);
+					selectedWord.loc.setLocation(point);
 				} else {
 					Point2D prev = new Point(preX, preY);
-					selectedToken.loc.setLocation(prev);
+					selectedWord.loc.setLocation(prev);
 				}
 			} else {
 				Point2D prev = new Point(preX, preY);
-				selectedToken.loc.setLocation(prev);
+				selectedWord.loc.setLocation(prev);
 			}
 		}
 		pressOut = true;
@@ -570,27 +707,28 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 	 */
 	void execDoubleclick() {
 		printDebug("++++++ Exec double click");
-		if (!pressOut) {
-			printDebug("++++++ Nod pressOut"+selectedToken.text);
-
-			RandomToken answTokselec=null;
-			if (selectedToken != null) {
-				String text=String.format("%-10s",selectedToken.text).replace(' ', '.');
-				for (RandomToken answ : answerTokenList) {
-				//	printDebug("++++++ Nod pressOut answToselekt"+answ.text);
-
-					if (answ.text.equals(text) ){
-						answTokselec = answ;
+		if (!pressOut && easyOption) {
+			 			SentenceWord wordInRightPos=null;
+			/***
+			 * Cerca la parola slezionata nella frase , 
+			 * 	verificando il testo, e verificando se 'e gia stata resa visibile (IN CASO DI
+			 * 	PAROLE UGUALI, deve esporre la successiva)
+			 * 
+			 */
+			if (selectedWord != null) {
+				String selectedWordText=String.format("%-10s",selectedWord.text).replace(' ', '.');
+				for (SentenceWord sentenceWord : sentenceWordsList) {
+					//se la parole e gia visibiel continua il ciclo per cercare la parola dopo
+					// perche anche avendo lo stesso testo vuole dire che ci sono due parole uguali
+					if (sentenceWord.text.equals(selectedWordText) && !sentenceWord.visible){
+						wordInRightPos = sentenceWord;
 						break;
 					}
-					
 				}
-				if(answTokselec!=null) {
-					printDebug("++++++ Nod pressOut answToselekt"+answTokselec.text);
-
-				selectedToken.visible = false;
-				answTokselec.visible = true;
-				//rightAnswer();
+				if(wordInRightPos!=null) {
+				selectedWord.visible = false;
+				wordInRightPos.visible = true;
+				wrongAnswer();
 				repaint();
 				}
 				
@@ -607,9 +745,9 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 	 * Mischia le parole nel rettangolo superiore :
 	 */
 	public void shake() {
-		if (randomsTokenList == null)
+		if (wordsToDragList == null)
 			return;
-		if (randomsTokenList.isEmpty())
+		if (wordsToDragList.isEmpty())
 			return;
 		Font font = new Font(null, Font.PLAIN, 20);
 		FontMetrics metrics = this.getFontMetrics(font);
@@ -618,7 +756,7 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 		int hgt = metrics.getHeight();
 		int Min = 0;
 
-		for (RandomToken rt : randomsTokenList) {
+		for (SentenceWord rt : wordsToDragList) {
 			if (!rt.visible)
 				continue;
 
@@ -683,4 +821,6 @@ public class JPOrdersentence extends JPanel implements MouseListener, MouseMotio
 		this.easyOption = easyOption;
 	}
 
+	
+	
 }
