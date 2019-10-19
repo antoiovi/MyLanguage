@@ -65,7 +65,8 @@ public class JDOrderSentence extends JDialog implements Quizinterface {
 	 */
 	private JPanel contentPane;
 	private JScrollPane jscrollPane;
-	private JPOrdersentence panel_ordsent;
+	private JPOrderLabels panel_ordsent;
+
 	private JLabel lblNotification;
 	private JCheckBox chckbxEasyOption;
 	
@@ -185,11 +186,12 @@ public class JDOrderSentence extends JDialog implements Quizinterface {
 
 		lblNotification = new JLabel("----");
 		panel.add(lblNotification);
-		// Pannello di gioco : JPOrdersentence
-		panel_ordsent = new JPOrdersentence();
+		
+		panel_ordsent=new JPOrderLabels();
 		jscrollPane = new JScrollPane((JPanel) panel_ordsent);
 		contentPane.add(jscrollPane, BorderLayout.CENTER);
-
+		
+		
 		// contentPane.add(panel_ordsent, BorderLayout.EAST);
 		panel_ordsent.setQuiz(this);
 		//panel_ordsent.setBackground(Color.WHITE);
@@ -206,8 +208,10 @@ public class JDOrderSentence extends JDialog implements Quizinterface {
 		//Imposta la prima frase della lista
 		index = 1;
 		// disegna il pannello di gioco con la prima frase
-		panel_ordsent.configSentence(sentences.get(index));
-
+		//panel_ordsent.configSentence(sentences.get(index));
+		
+	//	panel_ordsent.setSentence(sentences.get(index));
+		
 		// lblNotification.setText(sentences.get(index));
 		lblNotification.setText("GO ...!");
 		updatescore();
@@ -220,7 +224,8 @@ public class JDOrderSentence extends JDialog implements Quizinterface {
  */
 	void resetSentence() {
 		
-		panel_ordsent.configSentence(sentences.get(index));
+		//panel_ordsent.configSentence();
+		
 		lblNotification.setText(sentences.get(index));
 		score = 0;
 		wrongans = 0;
