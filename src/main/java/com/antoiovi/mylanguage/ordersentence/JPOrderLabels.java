@@ -1,11 +1,14 @@
 package com.antoiovi.mylanguage.ordersentence;
 
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
-
+import javax.swing.SwingConstants;
 
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -28,64 +31,84 @@ import javax.swing.border.LineBorder;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.BorderLayout;
 
 
 public class JPOrderLabels extends JLayeredPane {
+	
+;
+public static final int WIDTH = 680;
+public static final int HEIGHT = 480;
+private static final int GRID_ROWS = 2;
+private static final int GRID_COLS = 1;
+private static final int GAP = 3;
+private static final Dimension LAYERED_PANE_SIZE = new Dimension(WIDTH, HEIGHT);
+private static final Dimension DRAG_PANE_SIZE = new Dimension(400, 250);
+private static final Dimension SENTENCE_PANE_SIZE = new Dimension(WIDTH, HEIGHT);
+private static final Dimension LABEL_SIZE = new Dimension(60, 40);
+
+private GridLayout gridlayout = new GridLayout(GRID_ROWS, GRID_COLS, GAP, GAP);
+JPanel layeredPane   = new JPanel(gridlayout);
+private JLabel redLabel = new JLabel("Red", SwingConstants.CENTER);
+private JLabel blueLabel = new JLabel("Blue", SwingConstants.CENTER);
+
 	public JPOrderLabels() {
-		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.7, 0.3, Double.MIN_VALUE};
-		setLayout(gridBagLayout);
 		
-		panelWordsToDrag = new JPanel();
-		panelWordsToDrag.setPreferredSize(new Dimension(500, 300));
-		panelWordsToDrag.addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentShown(ComponentEvent e) {
-				log("SHOWNN");
-					}
-			@Override
-			public void componentResized(ComponentEvent e) {
-						//log("RESIZED");
-			}
-			 
-		});
-		panelWordsToDrag.setLayout(null);
-		GridBagConstraints gbc_panel = new GridBagConstraints();
-		gbc_panel.insets = new Insets(0, 0, 5, 0);
-		gbc_panel.fill = GridBagConstraints.BOTH;
-		gbc_panel.gridx = 0;
-		gbc_panel.gridy = 0;
-		add(panelWordsToDrag, gbc_panel);
+		layeredPane.setSize(DRAG_PANE_SIZE);
+	    layeredPane.setLocation(2 * GAP, 2 * GAP);
 		
-		JLabel lblNewLabel = new JLabel("New label");
-		lblNewLabel.setBorder(new LineBorder(new Color(0, 0, 0)));
-		lblNewLabel.setBounds(80, 110, 70, 15);
-		panelWordsToDrag.add(lblNewLabel);
-		
+	    panelWordsToDrag = new JPanel();
+	    panelWordsToDrag.setBackground(Color.yellow);
+	    panelWordsToDrag.setPreferredSize(LAYERED_PANE_SIZE);
+	    panelWordsToDrag.setLayout(null);
 		panelSentence = new JPanel();
-		FlowLayout flowLayout = (FlowLayout) panelSentence.getLayout();
-		flowLayout.setAlignment(FlowLayout.LEFT);
-		GridBagConstraints gbc_panel_1 = new GridBagConstraints();
-		gbc_panel_1.fill = GridBagConstraints.BOTH;
-		gbc_panel_1.gridx = 0;
-		gbc_panel_1.gridy = 1;
-		add(panelSentence, gbc_panel_1);
-		maxwidth=panelWordsToDrag.getPreferredSize().width;
-		maxheight=panelWordsToDrag.getPreferredSize().height;
+
+		maxwidth=300;
+		maxheight=200;
+		
+		
+		
+		layeredPane.setSize(LAYERED_PANE_SIZE);
+		layeredPane.setLocation(2 * GAP, 2 * GAP);
+		layeredPane.setBackground(Color.black);
+
+		layeredPane.add(panelWordsToDrag);
+		layeredPane.add(panelSentence);
+
+		panelSentence.setLayout(new FlowLayout());
+		redLabel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+			}
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+			}
+		});
+		redLabel.setOpaque(true);
+		redLabel.setBackground(Color.red.brighter().brighter());
+		redLabel.setPreferredSize(LABEL_SIZE);
+		panelSentence.add(redLabel);
+
+		blueLabel.setOpaque(true);
+		blueLabel.setBackground(Color.blue.brighter().brighter());
+		blueLabel.setPreferredSize(LABEL_SIZE);
+		panelWordsToDrag.add(blueLabel);
+
+		layeredPane.setBorder(BorderFactory.createEmptyBorder(GAP, GAP, GAP, GAP));
+		setPreferredSize(LAYERED_PANE_SIZE);
+		add(layeredPane, JLayeredPane.DEFAULT_LAYER);
+		
+		
 		
 		wordsToDragList = new ArrayList<SentenceWord>();
 		sentenceWordsList = new ArrayList<>();
 		lablesToDragList=new ArrayList<JLabel>();
 		this.setSentence(sentence);
 		 
-		MyMouseAdapter myMouseAdapter = new MyMouseAdapter();
-		// panelWordsToDrag.addMouseListener(myMouseAdapter);
-	    // panelWordsToDrag.addMouseMotionListener(myMouseAdapter);
-		addMouseListener(myMouseAdapter);
-	    addMouseMotionListener(myMouseAdapter);
+		
 	}
 
 	/*
@@ -373,18 +396,35 @@ public class JPOrderLabels extends JLayeredPane {
 
 	        @Override
 	        public void mousePressed(MouseEvent me) {
-	            Component c= me.getComponent();
 	        	log("mouse pressed");
-	        	log(c.toString());
-	        	for(JLabel lbl:lablesToDragList) {
-	        		logLabe(lbl);
-	        		if(lbl.getBounds().contains(me.getPoint())){
-	        			log("PUNTO Ok");
-	        		dragLabel=lbl;
-	        		break;
-	        		}
-	        	}
-	            
+
+	        	clickedPanel = (JPanel) layeredPane.getComponentAt(me.getPoint());
+				Component[] components = clickedPanel.getComponents();
+				if (components.length == 0) {
+					return;
+				}
+				// if we click on jpanel that holds a jlabel
+				if (components[0] instanceof JLabel) {
+
+					// remove label from panel
+					dragLabel = (JLabel) components[0];
+					 
+		        		            
+					
+					clickedPanel.remove(dragLabel);
+					clickedPanel.revalidate();
+					clickedPanel.repaint();
+
+					dragLabelWidthDiv2 = dragLabel.getWidth() / 2;
+					dragLabelHeightDiv2 = dragLabel.getHeight() / 2;
+
+					int x = me.getPoint().x - dragLabelWidthDiv2;
+					int y = me.getPoint().y - dragLabelHeightDiv2;
+					dragLabel.setLocation(x, y);
+					add(dragLabel, JLayeredPane.DRAG_LAYER);
+					repaint();
+				}
+	          
 	            if (dragLabel==null) {
 	                return;
 	            }else {
