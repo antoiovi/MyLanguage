@@ -1,6 +1,7 @@
 package com.antoiovi.mylanguage.ordersentence;
 
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
 
@@ -18,14 +19,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import javax.swing.border.LineBorder;
 
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.FlowLayout;
 
 
-public class JPOrderLabels extends JPanel {
+public class JPOrderLabels extends JLayeredPane {
 	public JPOrderLabels() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};
@@ -35,6 +40,7 @@ public class JPOrderLabels extends JPanel {
 		setLayout(gridBagLayout);
 		
 		panelWordsToDrag = new JPanel();
+		panelWordsToDrag.setPreferredSize(new Dimension(500, 300));
 		panelWordsToDrag.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentShown(ComponentEvent e) {
@@ -67,11 +73,19 @@ public class JPOrderLabels extends JPanel {
 		gbc_panel_1.gridx = 0;
 		gbc_panel_1.gridy = 1;
 		add(panelSentence, gbc_panel_1);
+		maxwidth=panelWordsToDrag.getPreferredSize().width;
+		maxheight=panelWordsToDrag.getPreferredSize().height;
 		
 		wordsToDragList = new ArrayList<SentenceWord>();
 		sentenceWordsList = new ArrayList<>();
+		lablesToDragList=new ArrayList<JLabel>();
 		this.setSentence(sentence);
-
+		 
+		MyMouseAdapter myMouseAdapter = new MyMouseAdapter();
+		// panelWordsToDrag.addMouseListener(myMouseAdapter);
+	    // panelWordsToDrag.addMouseMotionListener(myMouseAdapter);
+		addMouseListener(myMouseAdapter);
+	    addMouseMotionListener(myMouseAdapter);
 	}
 
 	/*
@@ -82,6 +96,8 @@ public class JPOrderLabels extends JPanel {
 	 */
 	List<SentenceWord> wordsToDragList;
 	List<SentenceWord> sentenceWordsList;
+	List<JLabel> lablesToDragList;
+
 	/**
 	 * easyOption 1) if easy option i can ordinate the word on the desk... 2) Se
 	 * doppio click su una parola, la posiziona nel posto giusto
@@ -104,6 +120,8 @@ public class JPOrderLabels extends JPanel {
 	static final int minim_lgh_vis=3;
 
 	String sentence=" Questa e una frase prova ad";
+	int maxwidth;
+	int maxheight;
 	
 	
 	public void setSentence(String sentence) {
@@ -146,24 +164,25 @@ public class JPOrderLabels extends JPanel {
 			//int MaxX = this.getPreferredSize().width - wordToDrag.label.getPreferredSize().width;
 			//log("PANNELLO widith : "+String.valueOf(getPreferredSize().width ));
 			//log("PANNELLO height : "+String.valueOf(getPreferredSize().height));
-			int MaxX = 600- wordToDrag.label.getPreferredSize().width;
+			int MaxX = maxwidth- wordToDrag.label.getPreferredSize().width;
 			/**
 			 * Coordinata X Numero casuale tra 0 max width;
 			 */
 			int MinX = 0 + margin;
 			int randomX = MinX + (int) (Math.random() * ((MaxX - MinX) + 1));
-			int MaxY = 300 -wordToDrag.label.getPreferredSize().height - margin;
+			int MaxY = maxheight -wordToDrag.label.getPreferredSize().height - margin;
 			/*int MaxY = panelWordsToDrag.getPreferredSize().height - 
 					wordToDrag.label.getPreferredSize().height - margin;*/
 			int MinY = 0 + margin + wordToDrag.label.getPreferredSize().height;
 			int randomY = MinY + (int) (Math.random() * ((MaxY - MinY) + 1));
 
 			wordToDrag.rect=new Rectangle(randomX, randomY,
-					100 , 20);
+					wordToDrag.label.getPreferredSize().width ,
+					wordToDrag.label.getPreferredSize().height);
 			/**
 			 * if too short show in the answers...
 			 */
-			wordToDrag.visible = (tokens[count].length() <= minim_lgh_vis) ? false : true;
+			//wordToDrag.visible = (tokens[count].length() <= minim_lgh_vis) ? false : true;
 			wordToDrag.visible =true;
 			wordsToDragList.add(wordToDrag);
 		}
@@ -185,11 +204,14 @@ public class JPOrderLabels extends JPanel {
 		
 		wordsToDragList.clear();
 		sentenceWordsList.clear();
+		lablesToDragList.clear();
 	}
 	
 	
 	
-	
+	/***
+	 * Aggiunge le etichette al pannello
+	 */
 	void paintDragLabels() {
 		for(SentenceWord wordtodrag:wordsToDragList) {
 			JLabel label=wordtodrag.label;
@@ -197,10 +219,12 @@ public class JPOrderLabels extends JPanel {
 			label.setBounds(wordtodrag.rect);
 			label.setVisible(wordtodrag.visible);
 			panelWordsToDrag.add(label);
-
+			this.lablesToDragList.add(label);
 		}
 	}
-	
+	/***
+	 * Aggiunge le etichette al pannello
+	 */
 	void paintSentenceLabels() {
 		for(SentenceWord wordsentence:sentenceWordsList) {
 			JLabel label=wordsentence.label;
@@ -218,6 +242,9 @@ public class JPOrderLabels extends JPanel {
 		}
 		//this.repaint();
 	}
+	/***
+	 * Cambia gli attributi alle etichette
+	 */
 	void repaintDragLabels() {
 		for(SentenceWord wordtodrag:wordsToDragList) {
 			JLabel label=wordtodrag.label;
@@ -229,6 +256,9 @@ public class JPOrderLabels extends JPanel {
 		}
 		this.repaint();
 	}
+	/***
+	 * Cambia gli attributi alle etichette
+	 */
 	void repaintSentenceLabels() {
 		for(SentenceWord wordsentence:sentenceWordsList) {
 			JLabel label=wordsentence.label;
@@ -321,6 +351,7 @@ public class JPOrderLabels extends JPanel {
 		System.out.print("------LABLE : Text: "+lbl.getText());
 		System.out.print("  width: "+String.valueOf(lbl.getWidth()));
 		System.out.print("  Preferred size width : "+String.valueOf(lbl.getPreferredSize().width));
+		System.out.print(" Bounds: "+String.valueOf(lbl.getBounds().toString()));
 
 		System.out.println("----");
 	
@@ -333,7 +364,89 @@ public class JPOrderLabels extends JPanel {
 	}
 
 	
+	 private class MyMouseAdapter extends MouseAdapter {
+	        private JLabel dragLabel = null;
+	        Rectangle draggedBound;
+	        private int dragLabelWidthDiv2;
+	        private int dragLabelHeightDiv2;
+	        private JPanel clickedPanel = null;
 
+	        @Override
+	        public void mousePressed(MouseEvent me) {
+	            Component c= me.getComponent();
+	        	log("mouse pressed");
+	        	log(c.toString());
+	        	for(JLabel lbl:lablesToDragList) {
+	        		logLabe(lbl);
+	        		if(lbl.getBounds().contains(me.getPoint())){
+	        			log("PUNTO Ok");
+	        		dragLabel=lbl;
+	        		break;
+	        		}
+	        	}
+	            
+	            if (dragLabel==null) {
+	                return;
+	            }else {
+		            clickedPanel = panelWordsToDrag;
+		            draggedBound=dragLabel.getBounds();
+	            	 // remove label from panel
+	                clickedPanel.remove(dragLabel);
+	                clickedPanel.revalidate();
+	                clickedPanel.repaint();
+
+	                dragLabelWidthDiv2 = dragLabel.getWidth() / 2;
+	                dragLabelHeightDiv2 = dragLabel.getHeight() / 2;
+
+	                int x = me.getPoint().x - dragLabelWidthDiv2;
+	                int y = me.getPoint().y - dragLabelHeightDiv2;
+	                dragLabel.setLocation(x, y);
+	                panelWordsToDrag.add(dragLabel, JLayeredPane.DRAG_LAYER);
+	                repaint();
+	            }
+	            
+	          
+	            }
+	        
+	        @Override
+	        public void mouseDragged(MouseEvent me) {
+	            if (dragLabel == null) {
+	                return;
+	            }
+	            int x = me.getPoint().x - dragLabelWidthDiv2;
+	            int y = me.getPoint().y - dragLabelHeightDiv2;
+	            dragLabel.setLocation(x, y);
+	            repaint();
+	        }
+
+	        @Override
+	        public void mouseReleased(MouseEvent me) {
+	            if (dragLabel == null) {
+	                return;
+	            }
+	            remove(dragLabel); // remove dragLabel for drag layer of JLayeredPane
+	            JPanel droppedPanel = (JPanel) panelSentence.getComponentAt(me.getPoint());
+	            // Verificare se la lable ' stata lascita su un parola esatta
+	            
+	            
+	            if (droppedPanel == null) {
+	                // if off the grid, return label to home
+	            	dragLabel.setBounds(draggedBound);
+	                clickedPanel.add(dragLabel);
+	                clickedPanel.revalidate();
+	            } else {
+	            	 // if off the grid, return label to home
+	            	dragLabel.setBounds(draggedBound);
+	                clickedPanel.add(dragLabel);
+	                clickedPanel.revalidate();
+	            }
+
+	            repaint();
+	            dragLabel = null;
+	        }
+	 }
+	 
+	 
 	void log(String string) {
 		System.out.println(string);				
 					}

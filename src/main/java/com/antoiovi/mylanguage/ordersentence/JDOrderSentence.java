@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JButton;
 
 import java.awt.event.ActionListener;
@@ -22,6 +23,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.ItemEvent;
 
 import javax.swing.JScrollPane;
@@ -188,7 +191,7 @@ public class JDOrderSentence extends JDialog implements Quizinterface {
 		panel.add(lblNotification);
 		
 		panel_ordsent=new JPOrderLabels();
-		jscrollPane = new JScrollPane((JPanel) panel_ordsent);
+		jscrollPane = new JScrollPane((JLayeredPane) panel_ordsent);
 		contentPane.add(jscrollPane, BorderLayout.CENTER);
 		
 		
@@ -300,5 +303,5 @@ public class JDOrderSentence extends JDialog implements Quizinterface {
 		lblNotification.setText("END !!");
 
 	}
-
+	
 }
