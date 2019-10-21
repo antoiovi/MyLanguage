@@ -10,11 +10,9 @@ import javax.swing.*;
 public class DragLabel extends JLayeredPane {
 	public static final int WIDTH = 680;
 	public static final int HEIGHT = 480;
-Color LABLE_SENTENCE_COLOR=Color.red.brighter().brighter();
-Color LABLE_SENTENCE_COLOR_OVERLAP=Color.cyan;
-
-
-
+	Color LABLE_SENTENCE_COLOR = Color.red.brighter().brighter();
+	Color LABLE_SENTENCE_COLOR_OVERLAP = Color.cyan;
+	Color LABLE_COLOR_MATCH = Color.white;
 
 	public static final int MAX_DRAG_WIDTH = WIDTH - 10;
 	public static final int MAX_DRAG_HEIGHT = HEIGHT / 2 - 10;
@@ -35,6 +33,7 @@ Color LABLE_SENTENCE_COLOR_OVERLAP=Color.cyan;
 
 	List<JLabel> lablesToDragList = new ArrayList<JLabel>();
 	List<JLabel> lablesSentence = new ArrayList<JLabel>();
+	List<JLabel> lablesMatches = new ArrayList<JLabel>();
 
 	public DragLabel() {
 
@@ -139,10 +138,9 @@ Color LABLE_SENTENCE_COLOR_OVERLAP=Color.cyan;
 			int randomY = MinY + (int) (Math.random() * ((MaxY - MinY) + 1));
 			Rectangle rect = new Rectangle(randomX, randomY, labelToDrag.getPreferredSize().width,
 					labelToDrag.getPreferredSize().height);
-			labelToDrag.setBounds(rect);
-			/**
-			 * if too short show in the answers...
-			 */
+			labelToDrag.setBounds(rect);/**
+										 * if too short show in the answers...
+										 */
 			// wordToDrag.visible = (tokens[count].length() <= minim_lgh_vis) ? false :
 			// true;
 
@@ -153,48 +151,62 @@ Color LABLE_SENTENCE_COLOR_OVERLAP=Color.cyan;
 		for (JLabel lbl : lablesToDragList)
 			panelWordsToDrag.remove(lbl);
 		lablesToDragList.clear();
+		lablesMatches.clear();
 
 	}
 
 	void log(String s) {
 		System.out.println(s);
 	}
+
+	/**
+	 * Mouse adapter per le etichette della frase (pannelo sotto
+	 * @author antoiovi
+	 *
+	 */
 	private class MyMouseAdapterLabel extends MouseAdapter {
 		@Override
 		public void mouseEntered(MouseEvent e) {
-			Component c=e.getComponent();
-			if(c!=null && c instanceof JLabel) {
-				JLabel lbl=(JLabel)c;
-				log("Entered "+lbl.getText());
-				log("PARENT ="+c.getParent());
-				if(c.getParent()==panelSentence) {
-					if(myMouseAdapter.getDragLabel()!=null)
-					lbl.setBackground(LABLE_SENTENCE_COLOR_OVERLAP);
+			Component c = e.getComponent();
+			if (c != null && c instanceof JLabel) {
+				JLabel lbl = (JLabel) c;
+				if(lablesMatches.contains(lbl))
+					return;
+				// log("Entered "+lbl.getText());
+				// log("PARENT ="+c.getParent());
+				if (c.getParent() == panelSentence) {
+					if (myMouseAdapter.getDragLabel() != null )
+						lbl.setBackground(LABLE_SENTENCE_COLOR_OVERLAP);
 				}
 			}
 		}
 
 		@Override
 		public void mouseExited(MouseEvent e) {
-				Component c=e.getComponent();
-			if(c!=null && c instanceof JLabel) {
-				JLabel lbl=(JLabel)c;
+			Component c = e.getComponent();
+			if (c != null && c instanceof JLabel) {
+				JLabel lbl = (JLabel) c;
 				log("EXITED LABLE "+lbl.getText());
-				log("PARENT ="+c.getParent());
-				if(c.getParent()==panelSentence) {
-					if(myMouseAdapter.getDragLabel()!=null)
+				if(lablesMatches.contains(lbl))
+					lbl.setBackground(LABLE_COLOR_MATCH);
+				else if(lablesSentence.contains(lbl))
 					lbl.setBackground(LABLE_SENTENCE_COLOR);
-				}
+					
 			}
-			
-			
+
 		}
 		
-		 
+
 	};
-	
+	/***
+	 * Mouse adapter per trascinare le lables
+	 * @author antoiovi
+	 *
+	 */
+
 	private class MyMouseAdapter extends MouseAdapter {
 		private JLabel dragLabel = null;
+
 		public JLabel getDragLabel() {
 			return dragLabel;
 		}
@@ -207,7 +219,7 @@ Color LABLE_SENTENCE_COLOR_OVERLAP=Color.cyan;
 		@Override
 		public void mousePressed(MouseEvent me) {
 			clickedPanel = (JPanel) layeredPane.getComponentAt(me.getPoint());
-			log("CLICKED :" + clickedPanel.toString());
+			//log("CLICKED :" + clickedPanel.toString());
 			/*
 			 * Component[] components = clickedPanel.getComponents(); if (components.length
 			 * == 0) { return; }
@@ -255,70 +267,68 @@ Color LABLE_SENTENCE_COLOR_OVERLAP=Color.cyan;
 
 		@Override
 		public void mouseReleased(MouseEvent me) {
-			if (dragLabel == null) {
-				
+			if (dragLabel == null) 
 				return;
-			}
+			
 			remove(dragLabel); // remove dragLabel for drag layer of JLayeredPane
 
 			JPanel droppedPanel = (JPanel) layeredPane.getComponentAt(me.getPoint());
-			if (droppedPanel == null) {
-				log("MOUSE RELEASED : droppedPanel == null");
-
-				// if off the grid, return label to home
-				clickedPanel.add(dragLabel);
-				dragLabel.setBounds(orignialBounds);
-				orignialBounds = null;
-				clickedPanel.revalidate();
-			} else {
-
+			boolean label_match = false;
+			if (droppedPanel != null) {
+				/***
+				 * Controlla se il mouse e rilasciato sul pannello della frase
+				 */
 				if (droppedPanel == panelSentence) {
-					 log(String.format("Realesd on panelsentence(%d,%d)",me.getX(),me.getY()));
+					log(String.format("Realesd on panelsentence(%d,%d)", me.getX(), me.getY()));
 					Component c = panelSentence.findComponentAt(me.getX(), me.getY());
 					Point point2 = new Point(me.getX(), me.getY() - panelSentence.getBounds().y);
 					log("Point2=" + point2.toString());
 					JLabel droppedLabel = null;
+					// Controlla se una delle LABELS della frase contiene il
+					// punto in cui 'e stato rilasciato il mouse
 					for (JLabel lbl : lablesSentence) {
 						if (lbl.getBounds().contains(point2)) {
 							droppedLabel = lbl;
-							log("MATCH lbl.getBounds().contains(me.getX(),me.getY()+MAX_DRAG_HEIHT : " + lbl.getText());
 							break;
 						}
 					}
-
+					Color droppedColor=null;
 					if (droppedLabel != null) {
-						if (droppedLabel.getText().equals(dragLabel.getText())) {
-							droppedLabel.setText("MATCH");
+						droppedColor=droppedLabel.getBackground();
+						/**
+						 * Il mouse 'e stato rilasciato su una labels del pannello della frase
+						 */
+						if (droppedLabel.getText().equals(dragLabel.getText())
+								&& !lablesMatches.contains(droppedLabel)) {
+							/**
+							 * La label dove 'e stata rilasciato il mouse ha il testo = alla label
+							 * trascinata, e non si trova nella lista delle labels gia' indovinate
+							 */
+							droppedLabel.setBackground(LABLE_COLOR_MATCH);
+							droppedColor=LABLE_COLOR_MATCH;
+							lablesMatches.add(droppedLabel);
 							clickedPanel.remove(dragLabel);
-							dragLabel=null;
-							droppedPanel=null;
-							droppedLabel=null;
+							dragLabel = null;
+							droppedPanel = null;
+							//droppedLabel = null;
 							orignialBounds = null;
 							clickedPanel.revalidate();
+							label_match = true;
 
-							
-						} else {
-							clickedPanel.add(dragLabel);
-							clickedPanel.revalidate();
-							dragLabel.setBounds(orignialBounds);
-							orignialBounds = null;
-						}
-					} else {
+						}else if(!lablesMatches.contains(droppedLabel))
+						droppedLabel.setBackground(LABLE_SENTENCE_COLOR);
 
-						clickedPanel.add(dragLabel);
-						clickedPanel.revalidate();
-						dragLabel.setBounds(orignialBounds);
-						orignialBounds = null;
 					}
-				}else {
-					clickedPanel.add(dragLabel);
-					clickedPanel.revalidate();
-					dragLabel.setBounds(orignialBounds);
-					orignialBounds = null;
 				}
-
 			}
-
+			// Se non MATCH allora riposiziona la label al suo posto
+			if (!label_match) {
+				clickedPanel.add(dragLabel);
+				clickedPanel.revalidate();
+				dragLabel.setBounds(orignialBounds);
+				orignialBounds = null;
+				
+			}
 			repaint();
 			dragLabel = null;
 		}

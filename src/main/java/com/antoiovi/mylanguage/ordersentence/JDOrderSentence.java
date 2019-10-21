@@ -54,7 +54,7 @@ public class JDOrderSentence extends JDialog implements Quizinterface {
 	 *  	- restituisce una lista mescolata delle frasi
 	 *  	- al bisogno restituisce nuovamente la lista di frasi in ordine sparso
 	 *  */
-	private OrderSentence ordersentence;
+	private OrderSentenc ordersentence;
 	
 	
 	int index = 0;
@@ -201,7 +201,7 @@ public class JDOrderSentence extends JDialog implements Quizinterface {
 		/**
 		 * Inizzializza le frasi con i valori default
 		 */
-		ordersentence = new OrderSentence();
+		ordersentence = new OrderSentenc();
 		init();
 	}
 

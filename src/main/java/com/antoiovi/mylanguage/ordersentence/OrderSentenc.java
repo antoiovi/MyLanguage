@@ -33,13 +33,13 @@ import com.antoiovi.mylanguage.QuestionAnswer;
  * 
  *
  */
-public class OrderSentence {
+public class OrderSentenc {
 Vector<String> sentences_list;
 
 private Mazzocarte mazzo;
 private File file;
 	
-	public OrderSentence(File file_){
+	public OrderSentenc(File file_){
 		this.file=file_;
 		sentences_list=new Vector<String>();
 		if(file==null){
@@ -61,7 +61,7 @@ private File file;
 		}
 		
 	}
-	public OrderSentence(){
+	public OrderSentenc(){
 		sentences_list=new Vector<String>();
 		String sentence=  "1 questa e una 1 frase prova a indovinare 2 frase se sei capace ";
 
