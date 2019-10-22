@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 public class JPOrderLabels extends JLayeredPane {
 	public static final int WIDTH = 680;
@@ -33,15 +34,15 @@ public class JPOrderLabels extends JLayeredPane {
 	private static final int GRID_COLS = 1;
 	private static final int GAP = 3;
 	private static final Dimension LAYERED_PANE_SIZE = new Dimension(WIDTH, HEIGHT);
-	
+
 	private static final int LABEL_WIDTH = 60;
 	private static final int LABEL_HEIGHT = 40;
 
-	private static final Dimension LABEL_SIZE = new Dimension(LABEL_WIDTH,LABEL_HEIGHT);
+	private static final Dimension LABEL_SIZE = new Dimension(LABEL_WIDTH, LABEL_HEIGHT);
 	private GridLayout gridlayout = new GridLayout(GRID_ROWS, GRID_COLS, GAP, GAP);
 	private JPanel layeredPane = new JPanel(gridlayout);
 	private JPanel[][] panelGrid = new JPanel[GRID_ROWS][GRID_COLS];
-	
+
 	private JPanel panelWordsToDrag;
 	private JPanel panelSentence;
 
@@ -49,7 +50,6 @@ public class JPOrderLabels extends JLayeredPane {
 	List<JLabel> lablesSentence = new ArrayList<JLabel>();
 	List<JLabel> lablesMatches = new ArrayList<JLabel>();
 
-	
 	/**
 	 * easyOption 1) if easy option i can ordinate the word on the desk... 2) Se
 	 * doppio click su una parola, la posiziona nel posto giusto
@@ -64,12 +64,21 @@ public class JPOrderLabels extends JLayeredPane {
 	 * Nel pannelo padre usare setQuiz(...) per inizzializzarlo
 	 */
 	Quizinterface quiz;
-	
-	
+
 	public void setEasyOption(boolean easyOption) {
 		this.easyOption = easyOption;
 	}
 
+	/**
+	 * Riferimento al pannello principale : Creata per : potere riportare le
+	 * coordinate dei punti allo stesso riferimento (quando serve ad esempio in
+	 * mouse adapre realesed)
+	 */
+	JPOrderLabels jpordelabels;
+
+	/**
+	 * Costruttore
+	 */
 	public JPOrderLabels() {
 
 		panelWordsToDrag = new JPanel();
@@ -85,8 +94,7 @@ public class JPOrderLabels extends JLayeredPane {
 		panelSentence.setLayout(new FlowLayout());
 		FlowLayout fl = (FlowLayout) panelSentence.getLayout();
 		fl.setAlignment(FlowLayout.LEFT);
-		
-		
+
 		panelWordsToDrag.setLayout(null);
 		layeredPane.setBorder(BorderFactory.createEmptyBorder(GAP, GAP, GAP, GAP));
 		setPreferredSize(LAYERED_PANE_SIZE);
@@ -97,6 +105,7 @@ public class JPOrderLabels extends JLayeredPane {
 		myMouseAdapter = new MyMouseAdapter();
 		addMouseListener(myMouseAdapter);
 		addMouseMotionListener(myMouseAdapter);
+		jpordelabels = this;
 	}
 
 	String sentence = "  Questa e una frase prova ad indovinarla se sei capace ";
@@ -104,7 +113,7 @@ public class JPOrderLabels extends JLayeredPane {
 
 	public void setSentence(String sentence) {
 		// Rimuovi spazi all'inizio ed alla fine
-		this.sentence=sentence.trim();
+		this.sentence = sentence.trim();
 		this.sentence = sentence;
 		this.clearSentence();
 		this.configSentence();
@@ -191,6 +200,7 @@ public class JPOrderLabels extends JLayeredPane {
 
 	/**
 	 * Mouse adapter per le etichette della frase (pannelo sotto
+	 * 
 	 * @author antoiovi
 	 *
 	 */
@@ -200,13 +210,16 @@ public class JPOrderLabels extends JLayeredPane {
 			Component c = e.getComponent();
 			if (c != null && c instanceof JLabel) {
 				JLabel lbl = (JLabel) c;
-				if(lablesMatches.contains(lbl))
+				if (lablesMatches.contains(lbl))
 					return;
 				// log("Entered "+lbl.getText());
 				// log("PARENT ="+c.getParent());
 				if (c.getParent() == panelSentence) {
-					if (myMouseAdapter.getDragLabel() != null )
+					if (myMouseAdapter.getDragLabel() != null) {
 						lbl.setBackground(LABLE_SENTENCE_COLOR_OVERLAP);
+						// log("ENTERED");
+						// logLabel(lbl);
+					}
 				}
 			}
 		}
@@ -216,20 +229,24 @@ public class JPOrderLabels extends JLayeredPane {
 			Component c = e.getComponent();
 			if (c != null && c instanceof JLabel) {
 				JLabel lbl = (JLabel) c;
-			//	log("EXITED LABLE "+lbl.getText());
-				if(lablesMatches.contains(lbl))
+				// log("EXITED LABLE "+lbl.getText());
+				if (lablesMatches.contains(lbl))
 					lbl.setBackground(LABLE_COLOR_MATCH);
-				else if(lablesSentence.contains(lbl))
+				else if (lablesSentence.contains(lbl))
 					lbl.setBackground(LABLE_SENTENCE_COLOR);
-					
+
 			}
 
 		}
-		
 
 	};
+
 	/***
-	 * Mouse adapter per trascinare le lables
+	 * Mouse adapter per trascinare le lables Viene assegnato alla classe principale
+	 * (che estende LayerdPane) (layeredPanel 'e il pannello normale inserito nel
+	 * layerd pane con un suo gestore layout, mentre il pannello pricipale non ha
+	 * gestore layout).
+	 * 
 	 * @author antoiovi
 	 *
 	 */
@@ -248,20 +265,26 @@ public class JPOrderLabels extends JLayeredPane {
 
 		@Override
 		public void mousePressed(MouseEvent me) {
+			// me.getcomponent 'e il pannello a cui 'e assegnato il mouse adapter
+			// log(me.getComponent().toString());
+
+			// Layered pane restituisce uno dei componento aggiunti a layeredpane
+			// (ricorda layeredpane 'e un JPanel inserito nella classe principale (che
+			// estende JLayeredPane)
 			clickedPanel = (JPanel) layeredPane.getComponentAt(me.getPoint());
-			//log("CLICKED :" + clickedPanel.toString());
-			/*
-			 * Component[] components = clickedPanel.getComponents(); if (components.length
-			 * == 0) { return; }
-			 */
+			if (clickedPanel == null) {
+				// log("cliccato in un annello no assegnato al layered pane");
+				return;
+			}
+
+			if (!(clickedPanel == panelWordsToDrag))
+				return;
 			Component c = panelWordsToDrag.findComponentAt(me.getX(), me.getY());
 
 			if (c instanceof JPanel)
 				return;
-
 			// if we click on jpanel that holds a jlabel
 			if (c instanceof JLabel) {
-
 				// remove label from panel
 				dragLabel = (JLabel) c;
 				if (!lablesToDragList.contains(c))
@@ -292,14 +315,15 @@ public class JPOrderLabels extends JLayeredPane {
 			int x = me.getPoint().x - dragLabelWidthDiv2;
 			int y = me.getPoint().y - dragLabelHeightDiv2;
 			dragLabel.setLocation(x, y);
+
 			repaint();
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent me) {
-			if (dragLabel == null) 
+			if (dragLabel == null)
 				return;
-			
+
 			remove(dragLabel); // remove dragLabel for drag layer of JLayeredPane
 
 			JPanel droppedPanel = (JPanel) layeredPane.getComponentAt(me.getPoint());
@@ -309,82 +333,101 @@ public class JPOrderLabels extends JLayeredPane {
 				 * Controlla se il mouse e rilasciato sul pannello della frase
 				 */
 				if (droppedPanel == panelSentence) {
-					//log(String.format("Realesd on panelsentence(%d,%d)", me.getX(), me.getY()));
+					// log(String.format("Realesd on panelsentence(%d,%d)", me.getX(), me.getY()));
 					Component c = panelSentence.findComponentAt(me.getX(), me.getY());
-					Point point2 = new Point(me.getX(), me.getY() - panelSentence.getBounds().y);
-					//log("Point2=" + point2.toString());
 					JLabel droppedLabel = null;
 					// Controlla se una delle LABELS della frase contiene il
 					// punto in cui 'e stato rilasciato il mouse
 					for (JLabel lbl : lablesSentence) {
-						if (lbl.getBounds().contains(point2)) {
+						/**
+						 * Converto le coordinate delle LABELS dal panelsentence --> alle coordinate del
+						 * pannello principale(JLayeredPane) perche' il punto dve rilascio il mouse 'e
+						 * nel layerd pane(draggedLEVEL)
+						 */
+						Rectangle rect = SwingUtilities.convertRectangle(panelSentence, lbl.getBounds(), jpordelabels);
+						if (rect.contains(me.getPoint())) {
 							droppedLabel = lbl;
 							break;
 						}
 					}
- 					if (droppedLabel != null) {
- 						/**
+					if (droppedLabel != null) {
+						/**
 						 * Il mouse 'e stato rilasciato su una labels del pannello della frase
 						 */
 						if (droppedLabel.getText().equals(dragLabel.getText())
 								&& !lablesMatches.contains(droppedLabel)) {
-							log("dropplabel HEIGHT : "+String.valueOf(droppedLabel.getHeight()));
 							/**
 							 * La label dove 'e stata rilasciato il mouse ha il testo = alla label
 							 * trascinata, e non si trova nella lista delle labels gia' indovinate
 							 */
 							droppedLabel.setBackground(LABLE_COLOR_MATCH);
- 							lablesMatches.add(droppedLabel);
- 							droppedLabel.setPreferredSize(null);
-							log("dropplabel HEIGHT : "+String.valueOf(droppedLabel.getHeight()));
+							lablesMatches.add(droppedLabel);
+							droppedLabel.setPreferredSize(null);
+							log("dropplabel HEIGHT : " + String.valueOf(droppedLabel.getHeight()));
 
- 							Dimension mins=new Dimension(droppedLabel.getPreferredSize().width,LABEL_HEIGHT);
- 							droppedLabel.setMinimumSize(mins);						
- 							droppedLabel.setPreferredSize(mins);
-							log("dropplabel HEIGHT : "+String.valueOf(droppedLabel.getHeight()));
+							Dimension mins = new Dimension(droppedLabel.getPreferredSize().width, LABEL_HEIGHT);
+							droppedLabel.setMinimumSize(mins);
+							droppedLabel.setPreferredSize(mins);
 
- 							Rectangle rect = new Rectangle(droppedLabel.getX(), droppedLabel.getY(),
- 									droppedLabel.getPreferredSize().width,
- 									droppedLabel.getPreferredSize().height+50);
- 							droppedLabel.setBounds(rect);
- 							
- 							
- 							//droppedPanel.repaint();
+							// Per fare in modo che cambiando colore la dimensione sia quella voluta
+							Rectangle rect = new Rectangle(droppedLabel.getX(), droppedLabel.getY(),
+									droppedLabel.getPreferredSize().width, droppedLabel.getPreferredSize().height + 50);
+							droppedLabel.setBounds(rect);
+
 							clickedPanel.remove(dragLabel);
 							dragLabel = null;
-							 
+
 							orignialBounds = null;
 							clickedPanel.revalidate();
 							label_match = true;
-
-						}else if(!lablesMatches.contains(droppedLabel))
-						droppedLabel.setBackground(LABLE_SENTENCE_COLOR);
+						} else if (!lablesMatches.contains(droppedLabel)) {
+							// Se la LABEL dove e stato laciato il mouse
+							// NON 'e nella lista delle labels gia indovinate
+							droppedLabel.setBackground(LABLE_SENTENCE_COLOR);
+						}
 
 					}
 				}
+			} else {
+				log("dropped panel=null");
 			}
 			// Se non MATCH allora riposiziona la label al suo posto
 			if (!label_match) {
+				//log("DRAGLABEL NON MATCH:");
+				//logLabel(dragLabel);
 				clickedPanel.add(dragLabel);
 				clickedPanel.revalidate();
 				dragLabel.setBounds(orignialBounds);
 				orignialBounds = null;
-				
 			}
 			repaint();
 			dragLabel = null;
 		}
 	}
+
 	public void setQuiz(Quizinterface quiz) {
 		this.quiz = quiz;
 	}
 
-	public void shake() {
-		// TODO Auto-generated method stub
-		
+	public void logLabel(JLabel lbl) {
+		Rectangle r = lbl.getBounds();
+		String s = String.format("Label :%s  Bounds :x=%d y=%d  width=%d  height= %d ", lbl.getText(), r.x, r.y,
+				r.width, r.height);
+		log(s);
 	}
 
-	
+	public void logPoint(Point p) {
+		String s = String.format("Point (%d,%d)", p.x, p.y);
+		log(s);
+	}
 
-	
+	public void logRectangle(Rectangle r) {
+		String s = String.format("Rectangle (%d,%d,%d,%d)", r.x, r.y, r.width, r.height);
+		log(s);
+	}
+
+	public void shake() {
+
+	}
+
 }
