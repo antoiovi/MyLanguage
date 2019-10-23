@@ -427,7 +427,30 @@ public class JPOrderLabels extends JLayeredPane {
 	}
 
 	public void shake() {
+		//for (int count = 0; count < tokens.length; count++) {
+		for (JLabel labelToDrag:lablesToDragList) {
+			/**
+			 * Random token has RANDOM position
+			 */
+			int MaxX = MAX_DRAG_WIDTH - labelToDrag.getPreferredSize().width;
+			/**
+			 * Coordinata X Numero casuale tra 0 max width;
+			 */
+			int MinX = 0 + MARGIN;
+			int randomX = MinX + (int) (Math.random() * ((MaxX - MinX) + 1));
+			int MaxY = MAX_DRAG_HEIGHT - labelToDrag.getPreferredSize().height - MARGIN;
+			int MinY = 0 + MARGIN + labelToDrag.getPreferredSize().height;
+			int randomY = MinY + (int) (Math.random() * ((MaxY - MinY) + 1));
+			Rectangle rect = new Rectangle(randomX, randomY, labelToDrag.getPreferredSize().width,
+					labelToDrag.getPreferredSize().height);
+			labelToDrag.setBounds(rect);
+			/**
+			 * if too short show in the answers...
+			 */
+			// wordToDrag.visible = (tokens[count].length() <= minim_lgh_vis) ? false :
+			// true;
 
+		}
 	}
 
 }
