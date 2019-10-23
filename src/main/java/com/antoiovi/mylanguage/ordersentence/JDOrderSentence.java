@@ -213,7 +213,7 @@ public class JDOrderSentence extends JDialog implements Quizinterface {
 		// disegna il pannello di gioco con la prima frase
 		//panel_ordsent.configSentence(sentences.get(index));
 		
-	//	panel_ordsent.setSentence(sentences.get(index));
+		panel_ordsent.setSentence(sentences.get(index));
 		
 		// lblNotification.setText(sentences.get(index));
 		lblNotification.setText("GO ...!");
@@ -228,7 +228,7 @@ public class JDOrderSentence extends JDialog implements Quizinterface {
 	void resetSentence() {
 		
 		//panel_ordsent.configSentence();
-		
+		panel_ordsent.setSentence(sentences.get(index));
 		lblNotification.setText(sentences.get(index));
 		score = 0;
 		wrongans = 0;

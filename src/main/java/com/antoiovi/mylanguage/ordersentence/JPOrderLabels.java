@@ -46,9 +46,9 @@ public class JPOrderLabels extends JLayeredPane {
 	private JPanel panelWordsToDrag;
 	private JPanel panelSentence;
 
-	List<JLabel> lablesToDragList = new ArrayList<JLabel>();
-	List<JLabel> lablesSentence = new ArrayList<JLabel>();
-	List<JLabel> lablesMatches = new ArrayList<JLabel>();
+	List<JLabel> labelsToDragList = new ArrayList<JLabel>();
+	List<JLabel> labelsSentenceList = new ArrayList<JLabel>();
+	List<JLabel> labelsMatchesList = new ArrayList<JLabel>();
 
 	/**
 	 * easyOption 1) if easy option i can ordinate the word on the desk... 2) Se
@@ -76,6 +76,11 @@ public class JPOrderLabels extends JLayeredPane {
 	 */
 	JPOrderLabels jpordelabels;
 
+	String sentence = "  Questa e una frase prova ad indovinarla se sei capace ";
+	private MyMouseAdapter myMouseAdapter;
+	private int minimumLenghtWord=3;
+	
+	
 	/**
 	 * Costruttore
 	 */
@@ -108,8 +113,7 @@ public class JPOrderLabels extends JLayeredPane {
 		jpordelabels = this;
 	}
 
-	String sentence = "  Questa e una frase prova ad indovinarla se sei capace ";
-	private MyMouseAdapter myMouseAdapter;
+	
 
 	public void setSentence(String sentence) {
 		// Rimuovi spazi all'inizio ed alla fine
@@ -120,12 +124,25 @@ public class JPOrderLabels extends JLayeredPane {
 		this.paintSentenceLabels();
 		this.paintDragLabels();
 	}
+	
+	private void clearSentence() {
+		for (JLabel lbl : labelsToDragList)
+			panelWordsToDrag.remove(lbl);
+		for (JLabel lbl : labelsSentenceList)
+			panelSentence.remove(lbl);
+		labelsToDragList.clear();
+		labelsMatchesList.clear();
+		labelsSentenceList.clear();
 
+	}
 	private void paintDragLabels() {
-		for (JLabel lbl : lablesToDragList)
+		for (JLabel lbl : labelsToDragList)
 			panelWordsToDrag.add(lbl);
-		for (JLabel lbl : lablesSentence)
+		for (JLabel lbl : labelsSentenceList)
 			panelSentence.add(lbl);
+		panelWordsToDrag.validate();
+		panelSentence.validate();
+		repaint();
 	}
 
 	private void paintSentenceLabels() {
@@ -137,11 +154,11 @@ public class JPOrderLabels extends JLayeredPane {
 		String tokens[];
 
 		tokens = sentence.trim().split(" ");
-
+		log(sentence);
 		for (int count = 0; count < tokens.length; count++) {
 			JLabel labelToDrag = new JLabel(tokens[count]);
 			JLabel labelsentence = new JLabel(tokens[count]);
-			lablesSentence.add(labelsentence);
+			labelsSentenceList.add(labelsentence);
 			labelsentence.addMouseListener(new MyMouseAdapterLabel());
 
 			labelsentence.setOpaque(true);
@@ -151,7 +168,7 @@ public class JPOrderLabels extends JLayeredPane {
 			labelToDrag.setOpaque(true);
 			labelToDrag.setBackground(Color.blue.brighter().brighter());
 			labelToDrag.setPreferredSize(LABEL_SIZE);
-			lablesToDragList.add(labelToDrag);
+			labelsToDragList.add(labelToDrag);
 
 			// get the advance of my text in this font
 
@@ -177,22 +194,19 @@ public class JPOrderLabels extends JLayeredPane {
 			int randomY = MinY + (int) (Math.random() * ((MaxY - MinY) + 1));
 			Rectangle rect = new Rectangle(randomX, randomY, labelToDrag.getPreferredSize().width,
 					labelToDrag.getPreferredSize().height);
-			labelToDrag.setBounds(rect);/**
-										 * if too short show in the answers...
-										 */
-			// wordToDrag.visible = (tokens[count].length() <= minim_lgh_vis) ? false :
+			labelToDrag.setBounds(rect);
+			/**
+			 * if too short show in the answers...
+			 */
+			if(tokens[count].length() <= minimumLenghtWord) {
+				this.jlabelMatch(labelsentence);
+				labelsToDragList.remove(labelToDrag);
+			}
 			// true;
-
 		}
 	}
 
-	private void clearSentence() {
-		for (JLabel lbl : lablesToDragList)
-			panelWordsToDrag.remove(lbl);
-		lablesToDragList.clear();
-		lablesMatches.clear();
-
-	}
+	
 
 	void log(String s) {
 		System.out.println(s);
@@ -210,7 +224,7 @@ public class JPOrderLabels extends JLayeredPane {
 			Component c = e.getComponent();
 			if (c != null && c instanceof JLabel) {
 				JLabel lbl = (JLabel) c;
-				if (lablesMatches.contains(lbl))
+				if (labelsMatchesList.contains(lbl))
 					return;
 				// log("Entered "+lbl.getText());
 				// log("PARENT ="+c.getParent());
@@ -230,9 +244,9 @@ public class JPOrderLabels extends JLayeredPane {
 			if (c != null && c instanceof JLabel) {
 				JLabel lbl = (JLabel) c;
 				// log("EXITED LABLE "+lbl.getText());
-				if (lablesMatches.contains(lbl))
+				if (labelsMatchesList.contains(lbl))
 					lbl.setBackground(LABLE_COLOR_MATCH);
-				else if (lablesSentence.contains(lbl))
+				else if (labelsSentenceList.contains(lbl))
 					lbl.setBackground(LABLE_SENTENCE_COLOR);
 
 			}
@@ -287,7 +301,7 @@ public class JPOrderLabels extends JLayeredPane {
 			if (c instanceof JLabel) {
 				// remove label from panel
 				dragLabel = (JLabel) c;
-				if (!lablesToDragList.contains(c))
+				if (!labelsToDragList.contains(c))
 					return;
 
 				orignialBounds = dragLabel.getBounds();
@@ -338,7 +352,7 @@ public class JPOrderLabels extends JLayeredPane {
 					JLabel droppedLabel = null;
 					// Controlla se una delle LABELS della frase contiene il
 					// punto in cui 'e stato rilasciato il mouse
-					for (JLabel lbl : lablesSentence) {
+					for (JLabel lbl : labelsSentenceList) {
 						/**
 						 * Converto le coordinate delle LABELS dal panelsentence --> alle coordinate del
 						 * pannello principale(JLayeredPane) perche' il punto dve rilascio il mouse 'e
@@ -355,13 +369,15 @@ public class JPOrderLabels extends JLayeredPane {
 						 * Il mouse 'e stato rilasciato su una labels del pannello della frase
 						 */
 						if (droppedLabel.getText().equals(dragLabel.getText())
-								&& !lablesMatches.contains(droppedLabel)) {
+								&& !labelsMatchesList.contains(droppedLabel)) {
 							/**
 							 * La label dove 'e stata rilasciato il mouse ha il testo = alla label
 							 * trascinata, e non si trova nella lista delle labels gia' indovinate
 							 */
 							droppedLabel.setBackground(LABLE_COLOR_MATCH);
-							lablesMatches.add(droppedLabel);
+							labelsMatchesList.add(droppedLabel);
+							
+							
 							droppedLabel.setPreferredSize(null);
 							log("dropplabel HEIGHT : " + String.valueOf(droppedLabel.getHeight()));
 
@@ -380,7 +396,7 @@ public class JPOrderLabels extends JLayeredPane {
 							orignialBounds = null;
 							clickedPanel.revalidate();
 							label_match = true;
-						} else if (!lablesMatches.contains(droppedLabel)) {
+						} else if (!labelsMatchesList.contains(droppedLabel)) {
 							// Se la LABEL dove e stato laciato il mouse
 							// NON 'e nella lista delle labels gia indovinate
 							droppedLabel.setBackground(LABLE_SENTENCE_COLOR);
@@ -428,7 +444,7 @@ public class JPOrderLabels extends JLayeredPane {
 
 	public void shake() {
 		//for (int count = 0; count < tokens.length; count++) {
-		for (JLabel labelToDrag:lablesToDragList) {
+		for (JLabel labelToDrag:labelsToDragList) {
 			/**
 			 * Random token has RANDOM position
 			 */
@@ -453,4 +469,27 @@ public class JPOrderLabels extends JLayeredPane {
 		}
 	}
 
+	
+	void jlabelMatch(JLabel label) {
+		// Non fa parte delle labels della frase? allora esci
+		if(!labelsSentenceList.contains(label))
+			return;
+		//Gia MATCHED?  allora esci 
+		if (labelsMatchesList.contains(label))
+			return;
+		label.setBackground(LABLE_COLOR_MATCH);
+		labelsMatchesList.add(label);
+	}
+	/**
+	 * Rimuovi label to drag
+	 * cambia il colore della labelsentence
+	 * @param labeltodrag
+	 * @param labelsentence
+	 */
+	void labelMatch(JLabel labeltodrag,JLabel labelsentence) {
+		labelsToDragList.remove(labeltodrag);
+		labelsentence.setBackground(LABLE_COLOR_MATCH);
+		labelsMatchesList.add(labelsentence);
+	}
+	
 }
