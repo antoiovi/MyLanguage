@@ -25,7 +25,10 @@ public class JPOrderLabels extends JLayeredPane {
 	Color LABLE_SENTENCE_COLOR = Color.red.brighter().brighter();
 	Color LABLE_SENTENCE_COLOR_OVERLAP = Color.cyan;
 	Color LABLE_COLOR_MATCH = Color.white;
-
+	Color LABLE_SENTENCE_FOREGROUND=Color.black;
+	Color LABEL_TODRAG_COLOR=Color.darkGray;
+	Color LABEL_TODRAG_FOREGROUND=Color.white;
+	
 	public static final int MAX_DRAG_WIDTH = WIDTH - 10;
 	public static final int MAX_DRAG_HEIGHT = HEIGHT / 2 - 10;
 	public static final int MARGIN = 10;
@@ -147,18 +150,29 @@ public class JPOrderLabels extends JLayeredPane {
 
 	}
 	private void paintDragLabels() {
-		for (JLabel lbl : labelsToDragList)
+		for (JLabel lbl : labelsToDragList) {
 			panelWordsToDrag.add(lbl);
-		for (JLabel lbl : labelsSentenceList)
-			panelSentence.add(lbl);
+		// Prima rimetto prefered size a null per poi avere il valore in base al testo
+		lbl.setPreferredSize(null);
+		Dimension mins = new Dimension(lbl.getPreferredSize().width, LABEL_HEIGHT);
+		lbl.setPreferredSize(mins);
+		// Per fare in modo che cambiando colore la dimensione sia quella voluta
+		Rectangle rect = new Rectangle(lbl.getX(), lbl.getY(),
+				lbl.getPreferredSize().width, lbl.getPreferredSize().height);
+		lbl.setBounds(rect);
+		
+		}
 		panelWordsToDrag.validate();
-		panelSentence.validate();
+
 		repaint();
+
 	}
 
 	private void paintSentenceLabels() {
-		// TODO Auto-generated method stub
-
+		for (JLabel lbl : labelsSentenceList)
+			panelSentence.add(lbl);
+		panelSentence.validate();
+		repaint();
 	}
 
 	private void configSentence() {
@@ -173,11 +187,12 @@ public class JPOrderLabels extends JLayeredPane {
 			labelsentence.addMouseListener(new MyMouseAdapterLabel());
 
 			labelsentence.setOpaque(true);
-			labelsentence.setBackground(Color.red.brighter().brighter());
+			labelSenteceHide(labelsentence);
 			labelsentence.setPreferredSize(LABEL_SIZE);
 
 			labelToDrag.setOpaque(true);
-			labelToDrag.setBackground(Color.blue.brighter().brighter());
+			labelToDrag.setForeground(LABEL_TODRAG_FOREGROUND);
+			labelToDrag.setBackground(LABEL_TODRAG_COLOR);
 			labelToDrag.setPreferredSize(LABEL_SIZE);
 			labelsToDragList.add(labelToDrag);
 
@@ -210,8 +225,9 @@ public class JPOrderLabels extends JLayeredPane {
 			 * if too short show in the answers...
 			 */
 			if(tokens[count].length() <= minimumLenghtWord) {
-				this.jlabelMatch(labelsentence);
+				labelSenteceShow(labelsentence);
 				labelsToDragList.remove(labelToDrag);
+				labelsMatchesList.add(labelsentence);
 			}
 			// true;
 		}
@@ -242,6 +258,8 @@ public class JPOrderLabels extends JLayeredPane {
 				if (c.getParent() == panelSentence) {
 					if (myMouseAdapter.getDragLabel() != null) {
 						lbl.setBackground(LABLE_SENTENCE_COLOR_OVERLAP);
+						lbl.setForeground(LABLE_SENTENCE_COLOR_OVERLAP);
+
 						// log("ENTERED");
 						// logLabel(lbl);
 					}
@@ -256,10 +274,11 @@ public class JPOrderLabels extends JLayeredPane {
 				JLabel lbl = (JLabel) c;
 				// log("EXITED LABLE "+lbl.getText());
 				if (labelsMatchesList.contains(lbl))
-					lbl.setBackground(LABLE_COLOR_MATCH);
+					//lbl.setBackground(LABLE_COLOR_MATCH);
+					labelSenteceShow(lbl);
 				else if (labelsSentenceList.contains(lbl))
-					lbl.setBackground(LABLE_SENTENCE_COLOR);
-
+					//lbl.setBackground(LABLE_SENTENCE_COLOR);
+					labelSenteceHide(lbl);
 			}
 
 		}
@@ -385,15 +404,13 @@ public class JPOrderLabels extends JLayeredPane {
 							 * La label dove 'e stata rilasciato il mouse ha il testo = alla label
 							 * trascinata, e non si trova nella lista delle labels gia' indovinate
 							 */
-							droppedLabel.setBackground(LABLE_COLOR_MATCH);
+							//droppedLabel.setBackground(LABLE_COLOR_MATCH);
+							labelSenteceShow(droppedLabel);
 							labelsMatchesList.add(droppedLabel);
 							
-							
+							// Prima rimetto prefered size a null per poi avere il valore in base al testo
 							droppedLabel.setPreferredSize(null);
-							log("dropplabel HEIGHT : " + String.valueOf(droppedLabel.getHeight()));
-
 							Dimension mins = new Dimension(droppedLabel.getPreferredSize().width, LABEL_HEIGHT);
-							droppedLabel.setMinimumSize(mins);
 							droppedLabel.setPreferredSize(mins);
 
 							// Per fare in modo che cambiando colore la dimensione sia quella voluta
@@ -410,7 +427,9 @@ public class JPOrderLabels extends JLayeredPane {
 						} else if (!labelsMatchesList.contains(droppedLabel)) {
 							// Se la LABEL dove e stato laciato il mouse
 							// NON 'e nella lista delle labels gia indovinate
-							droppedLabel.setBackground(LABLE_SENTENCE_COLOR);
+							// e non 'e uguale alla label trascinata
+							//droppedLabel.setBackground(LABLE_SENTENCE_COLOR);
+							labelSenteceHide(droppedLabel);
 						}
 
 					}
@@ -480,6 +499,14 @@ public class JPOrderLabels extends JLayeredPane {
 		}
 	}
 
+	void labelSenteceShow(JLabel label) {
+		label.setBackground(LABLE_COLOR_MATCH);
+		label.setForeground(LABLE_SENTENCE_FOREGROUND);
+	}
+	void labelSenteceHide(JLabel label) {
+		label.setBackground(LABLE_SENTENCE_COLOR);
+		label.setForeground(LABLE_SENTENCE_COLOR);
+	}
 	
 	void jlabelMatch(JLabel label) {
 		// Non fa parte delle labels della frase? allora esci
