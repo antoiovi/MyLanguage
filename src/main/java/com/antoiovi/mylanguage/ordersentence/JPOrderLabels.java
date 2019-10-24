@@ -40,8 +40,19 @@ public class JPOrderLabels extends JLayeredPane {
 
 	private static final Dimension LABEL_SIZE = new Dimension(LABEL_WIDTH, LABEL_HEIGHT);
 	private GridLayout gridlayout = new GridLayout(GRID_ROWS, GRID_COLS, GAP, GAP);
+	/***
+	 *  JPOrderLabels extends JLayeredPane (null layout)
+	 *  	|_ layeredPane (gridlayout) [add(layeredPane, JLayeredPane.DEFAULT_LAYER);]
+	 *  	|	|   |_ setSize(LAYERED_PANE_SIZE);
+	 *  	|	|_panelWordsToDrag (layout null)
+	 *  	|	|_panelSentence   (Flow layout )
+	 *  	|_addMouseListener(myMouseAdapter);
+	 *  	|		|__clickedPanel= panelWordsToDrag OPPURE panelSentence oppure null
+	*		|_addMouseMotionListener(myMouseAdapter);  			
+	 */		
+	
+	
 	private JPanel layeredPane = new JPanel(gridlayout);
-	private JPanel[][] panelGrid = new JPanel[GRID_ROWS][GRID_COLS];
 
 	private JPanel panelWordsToDrag;
 	private JPanel panelSentence;
@@ -102,7 +113,7 @@ public class JPOrderLabels extends JLayeredPane {
 
 		panelWordsToDrag.setLayout(null);
 		layeredPane.setBorder(BorderFactory.createEmptyBorder(GAP, GAP, GAP, GAP));
-		setPreferredSize(LAYERED_PANE_SIZE);
+		setLayout(null);
 		add(layeredPane, JLayeredPane.DEFAULT_LAYER);
 
 		this.setSentence(sentence);
