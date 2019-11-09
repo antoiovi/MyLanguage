@@ -66,11 +66,7 @@ public class JPArrangeLabels extends JLayeredPane {
 	List<JLabel> labelsSentenceList = new ArrayList<JLabel>();
 	List<JLabel> labelsMatchesList = new ArrayList<JLabel>();
 
-	/**
-	 * easyOption 1) if easy option i can ordinate the word on the desk... 2) Se
-	 * doppio click su una parola, la posiziona nel posto giusto
-	 */
-	boolean easyOption = false;
+	 
 
 	/**************
 	 * Quiz interface : per comunicare cpon la classe (JDialog) che contiene il
@@ -80,10 +76,7 @@ public class JPArrangeLabels extends JLayeredPane {
 	 * Nel pannelo padre usare setQuiz(...) per inizzializzarlo
 	 */
 	Quizinterface quiz;
-
-	public void setEasyOption(boolean easyOption) {
-		this.easyOption = easyOption;
-	}
+ 
 
 	/**
 	 * Riferimento al pannello principale : Creata per : potere riportare le

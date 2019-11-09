@@ -63,7 +63,6 @@ public class JDArrangeSentence extends JDialog implements Quizinterface {
 	private JPArrangeLabels panel_ordsent;
 
 	private JLabel lblNotification;
-	private JCheckBox chckbxEasyOption;
 	
 	/**
 	 * Launch the application.
@@ -150,21 +149,7 @@ public class JDArrangeSentence extends JDialog implements Quizinterface {
 			}
 		});
 		panel_1.add(btnNext);
-		/************************************
-		 * EASY OPTION : TO DISPOSE HANDLY THE WORDS ON THE DESK
-		 */
-		chckbxEasyOption = new JCheckBox("Easy option");
-		chckbxEasyOption.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent arg0) {
-				if (chckbxEasyOption.isSelected()) {
-					panel_ordsent.setEasyOption(true);
-				} else {
-					panel_ordsent.setEasyOption(false);
-				}
-			}
-		});
-
-		panel_1.add(chckbxEasyOption);
+		
 		/**
 		 * SHAKE
 		 */
