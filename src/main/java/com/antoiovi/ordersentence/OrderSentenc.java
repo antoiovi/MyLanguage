@@ -1,18 +1,16 @@
-package com.antoiovi.mylanguage.ordersentence;
+package com.antoiovi.ordersentence;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
 import com.antoiovi.mylanguage.Mazzocarte;
 import com.antoiovi.mylanguage.MylUtility;
-import com.antoiovi.mylanguage.QuestionAnswer;
 
 
 /**
@@ -63,7 +61,8 @@ private File file;
 	}
 	public OrderSentenc(){
 		sentences_list=new Vector<String>();
-		String sentence=  "1 questa e una 1 frase prova a indovinare 2 frase se sei capace ";
+		
+		String sentence=  "This is a sentence. Try to guess it ! abcdefghilmnopqrst ";
 
 		for (int x = 0; x < 5; x++) {
 		//	sentence=sentence.concat("word "+x);

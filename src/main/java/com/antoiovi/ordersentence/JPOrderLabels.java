@@ -1,4 +1,4 @@
-package com.antoiovi.mylanguage.ordersentence;
+package com.antoiovi.ordersentence;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -39,6 +39,8 @@ public class JPOrderLabels extends JLayeredPane {
 	private static final Dimension LAYERED_PANE_SIZE = new Dimension(WIDTH, HEIGHT);
 
 	private static final int LABEL_WIDTH = 60;
+	private static final int LABEL_WIDTH_SHORT = 30;
+
 	private static final int LABEL_HEIGHT = 40;
 
 	private static final Dimension LABEL_SIZE = new Dimension(LABEL_WIDTH, LABEL_HEIGHT);
@@ -101,7 +103,9 @@ public class JPOrderLabels extends JLayeredPane {
 	public JPOrderLabels() {
 
 		panelWordsToDrag = new JPanel();
+		panelWordsToDrag.setBackground(Color.white);
 		panelSentence = new JPanel();
+		panelSentence.setBackground(Color.white);
 
 		layeredPane.setSize(LAYERED_PANE_SIZE);
 		layeredPane.setLocation(2 * GAP, 2 * GAP);
@@ -187,7 +191,7 @@ public class JPOrderLabels extends JLayeredPane {
 			labelsentence.addMouseListener(new MyMouseAdapterLabel());
 
 			labelsentence.setOpaque(true);
-			labelSenteceHide(labelsentence);
+			labelSenteceSetHideColors(labelsentence);
 			labelsentence.setPreferredSize(LABEL_SIZE);
 
 			labelToDrag.setOpaque(true);
@@ -225,7 +229,13 @@ public class JPOrderLabels extends JLayeredPane {
 			 * if too short show in the answers...
 			 */
 			if(tokens[count].length() <= minimumLenghtWord) {
-				labelSenteceShow(labelsentence);
+			 rect.setSize(LABEL_WIDTH_SHORT, rect.height);
+				labelsentence.setBounds(rect);
+				// Prima rimetto prefered size a null per poi avere il valore in base al testo
+				labelsentence.setPreferredSize(null);
+				labelsentence.setText(tokens[count]);
+				//Imposta i colori per le etichette da mostarre
+				labelSenteceSetShowColors(labelsentence);
 				labelsToDragList.remove(labelToDrag);
 				labelsMatchesList.add(labelsentence);
 			}
@@ -275,10 +285,10 @@ public class JPOrderLabels extends JLayeredPane {
 				// log("EXITED LABLE "+lbl.getText());
 				if (labelsMatchesList.contains(lbl))
 					//lbl.setBackground(LABLE_COLOR_MATCH);
-					labelSenteceShow(lbl);
+					labelSenteceSetShowColors(lbl);
 				else if (labelsSentenceList.contains(lbl))
 					//lbl.setBackground(LABLE_SENTENCE_COLOR);
-					labelSenteceHide(lbl);
+					labelSenteceSetHideColors(lbl);
 			}
 
 		}
@@ -405,7 +415,7 @@ public class JPOrderLabels extends JLayeredPane {
 							 * trascinata, e non si trova nella lista delle labels gia' indovinate
 							 */
 							//droppedLabel.setBackground(LABLE_COLOR_MATCH);
-							labelSenteceShow(droppedLabel);
+							labelSenteceSetShowColors(droppedLabel);
 							labelsMatchesList.add(droppedLabel);
 							
 							// Prima rimetto prefered size a null per poi avere il valore in base al testo
@@ -429,7 +439,7 @@ public class JPOrderLabels extends JLayeredPane {
 							// NON 'e nella lista delle labels gia indovinate
 							// e non 'e uguale alla label trascinata
 							//droppedLabel.setBackground(LABLE_SENTENCE_COLOR);
-							labelSenteceHide(droppedLabel);
+							labelSenteceSetHideColors(droppedLabel);
 						}
 
 					}
@@ -497,30 +507,23 @@ public class JPOrderLabels extends JLayeredPane {
 			// true;
 
 		}
+		this.paintDragLabels();
 	}
 
-	void labelSenteceShow(JLabel label) {
+	void labelSenteceSetShowColors(JLabel label) {
 		label.setBackground(LABLE_COLOR_MATCH);
 		label.setForeground(LABLE_SENTENCE_FOREGROUND);
 	}
-	void labelSenteceHide(JLabel label) {
+	void labelSenteceSetHideColors(JLabel label) {
 		label.setBackground(LABLE_SENTENCE_COLOR);
 		label.setForeground(LABLE_SENTENCE_COLOR);
 	}
 	
-	void jlabelMatch(JLabel label) {
-		// Non fa parte delle labels della frase? allora esci
-		if(!labelsSentenceList.contains(label))
-			return;
-		//Gia MATCHED?  allora esci 
-		if (labelsMatchesList.contains(label))
-			return;
-		label.setBackground(LABLE_COLOR_MATCH);
-		labelsMatchesList.add(label);
-	}
+	
 	/**
-	 * Rimuovi label to drag
-	 * cambia il colore della labelsentence
+	 *  - Rimuovi labeltodrag dalle labelsToDragList
+	 *  - Cambia il colore della labelsentence
+	 *  - Aggiunge la labelsentence alla liste delle labels gia indovinate
 	 * @param labeltodrag
 	 * @param labelsentence
 	 */

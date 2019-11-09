@@ -1,4 +1,4 @@
-package com.antoiovi.mylanguage.ordersentence;
+package com.antoiovi.ordersentence;
 
 public interface Quizinterface {
 

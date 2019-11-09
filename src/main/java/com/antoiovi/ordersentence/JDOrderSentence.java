@@ -1,11 +1,10 @@
-package com.antoiovi.mylanguage.ordersentence;
+package com.antoiovi.ordersentence;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
@@ -14,17 +13,10 @@ import javax.swing.JButton;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.util.Iterator;
 import java.util.List;
-import java.awt.Color;
-
 import javax.swing.JCheckBox;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
-
+ 
 import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.ItemEvent;
 
 import javax.swing.JScrollPane;
@@ -95,7 +87,7 @@ public class JDOrderSentence extends JDialog implements Quizinterface {
 	public JDOrderSentence() {
 		setMaximumSize(new Dimension(1000, 1000));
 		// setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 600, 600);
+		setBounds(100, 100,50+ JPOrderLabels.WIDTH, 600);
 		// setMaximumSize(new Dimension(600,600));
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
