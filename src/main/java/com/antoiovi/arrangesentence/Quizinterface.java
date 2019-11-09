@@ -1,5 +1,9 @@
-package com.antoiovi.ordersentence;
-
+package com.antoiovi.arrangesentence;
+/**
+ * 
+ * @author antoiovi Antonello Iovino
+ *
+ */
 public interface Quizinterface {
 
 	public void wrongAnswer();

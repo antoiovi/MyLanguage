@@ -1,8 +1,11 @@
 package com.antoiovi.mylanguage;
 
-import java.util.Iterator;
-import java.util.Vector;
-
+ import java.util.Vector;
+/**
+ * 
+ * @author antoiovi Antonello Iovino
+ *
+ */
 public class Mazzocarte {
 int ncarte;
 Vector<Integer> mazzo;

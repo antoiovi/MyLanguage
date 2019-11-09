@@ -1,4 +1,4 @@
-package com.antoiovi.ordersentence;
+package com.antoiovi.arrangesentence;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -36,7 +36,7 @@ import java.io.File;
  * 
  *
  */
-public class JDOrderSentence extends JDialog implements Quizinterface {
+public class JDArrangeSentence extends JDialog implements Quizinterface {
 	/**
 	 * 	private OrderSentence ordersentence;
 	 * 	 questa classe si fa carico di :
@@ -46,7 +46,7 @@ public class JDOrderSentence extends JDialog implements Quizinterface {
 	 *  	- restituisce una lista mescolata delle frasi
 	 *  	- al bisogno restituisce nuovamente la lista di frasi in ordine sparso
 	 *  */
-	private OrderSentenc ordersentence;
+	private ArrangeSentence ordersentence;
 	
 	
 	int index = 0;
@@ -60,7 +60,7 @@ public class JDOrderSentence extends JDialog implements Quizinterface {
 	 */
 	private JPanel contentPane;
 	private JScrollPane jscrollPane;
-	private JPOrderLabels panel_ordsent;
+	private JPArrangeLabels panel_ordsent;
 
 	private JLabel lblNotification;
 	private JCheckBox chckbxEasyOption;
@@ -72,7 +72,7 @@ public class JDOrderSentence extends JDialog implements Quizinterface {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					JDOrderSentence frame = new JDOrderSentence();
+					JDArrangeSentence frame = new JDArrangeSentence();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -84,10 +84,10 @@ public class JDOrderSentence extends JDialog implements Quizinterface {
 	/**
 	 * Create the frame.
 	 */
-	public JDOrderSentence() {
+	public JDArrangeSentence() {
 		setMaximumSize(new Dimension(1000, 1000));
 		// setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100,50+ JPOrderLabels.WIDTH, 600);
+		setBounds(100, 100,50+ JPArrangeLabels.WIDTH, 600);
 		// setMaximumSize(new Dimension(600,600));
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -182,7 +182,7 @@ public class JDOrderSentence extends JDialog implements Quizinterface {
 		lblNotification = new JLabel("----");
 		panel.add(lblNotification);
 		
-		panel_ordsent=new JPOrderLabels();
+		panel_ordsent=new JPArrangeLabels();
 		jscrollPane = new JScrollPane((JLayeredPane) panel_ordsent);
 		contentPane.add(jscrollPane, BorderLayout.CENTER);
 		
@@ -193,7 +193,7 @@ public class JDOrderSentence extends JDialog implements Quizinterface {
 		/**
 		 * Inizzializza le frasi con i valori default
 		 */
-		ordersentence = new OrderSentenc();
+		ordersentence = new ArrangeSentence();
 		init();
 	}
 

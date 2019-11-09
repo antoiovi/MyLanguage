@@ -1,4 +1,4 @@
-package com.antoiovi.ordersentence;
+package com.antoiovi.arrangesentence;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,13 +31,13 @@ import com.antoiovi.mylanguage.MylUtility;
  * 
  *
  */
-public class OrderSentenc {
+public class ArrangeSentence {
 Vector<String> sentences_list;
 
 private Mazzocarte mazzo;
 private File file;
 	
-	public OrderSentenc(File file_){
+	public ArrangeSentence(File file_){
 		this.file=file_;
 		sentences_list=new Vector<String>();
 		if(file==null){
@@ -59,7 +59,7 @@ private File file;
 		}
 		
 	}
-	public OrderSentenc(){
+	public ArrangeSentence(){
 		sentences_list=new Vector<String>();
 		
 		String sentence=  "This is a sentence. Try to guess it ! abcdefghilmnopqrst ";
@@ -92,7 +92,6 @@ private File file;
 		//System.out.println(String.format("Mazzo sie %d \t sentences_lsit.size %d", mazzo.getNcarte(),sentences_list.size()));
 		List<String> sentences = new ArrayList<String>();
 		Iterator iter = mazzo.getMazzo().iterator();
-		Object[] o = sentences_list.toArray();
 		while (iter.hasNext()) {
 			Integer in = (Integer) iter.next();
 			sentences.add(sentences_list.get(in-1));
@@ -112,7 +111,7 @@ private File file;
 	 */
 	private boolean inizializeFromFile(){
 		sentences_list.clear();
-		int count=0;
+		//int count=0;
 		try{
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			String line;
@@ -120,7 +119,7 @@ private File file;
 				if(line.isEmpty())
 					continue;
 				sentences_list.add(line);
-				count++;
+				//count++;
 				}
 			//System.out.println("n righe"+count);
 			br.close();

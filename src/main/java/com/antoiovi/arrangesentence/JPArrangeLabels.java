@@ -1,4 +1,4 @@
-package com.antoiovi.ordersentence;
+package com.antoiovi.arrangesentence;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-public class JPOrderLabels extends JLayeredPane {
+public class JPArrangeLabels extends JLayeredPane {
 	public static final int WIDTH = 680;
 	public static final int HEIGHT = 480;
 	Color LABLE_SENTENCE_COLOR = Color.red.brighter().brighter();
@@ -90,7 +90,7 @@ public class JPOrderLabels extends JLayeredPane {
 	 * coordinate dei punti allo stesso riferimento (quando serve ad esempio in
 	 * mouse adapre realesed)
 	 */
-	JPOrderLabels jpordelabels;
+	JPArrangeLabels jpordelabels;
 
 	String sentence = "  Questa e una frase prova ad indovinarla se sei capace ";
 	private MyMouseAdapter myMouseAdapter;
@@ -100,7 +100,7 @@ public class JPOrderLabels extends JLayeredPane {
 	/**
 	 * Costruttore
 	 */
-	public JPOrderLabels() {
+	public JPArrangeLabels() {
 
 		panelWordsToDrag = new JPanel();
 		panelWordsToDrag.setBackground(Color.white);
