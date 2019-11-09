@@ -155,6 +155,8 @@ public class JPArrangeLabels extends JLayeredPane {
 	}
 	private void paintDragLabels() {
 		for (JLabel lbl : labelsToDragList) {
+			if(labelsMatchesList.contains(lbl))
+				continue;
 			panelWordsToDrag.add(lbl);
 		// Prima rimetto prefered size a null per poi avere il valore in base al testo
 		lbl.setPreferredSize(null);
@@ -416,8 +418,8 @@ public class JPArrangeLabels extends JLayeredPane {
 							 */
 							//droppedLabel.setBackground(LABLE_COLOR_MATCH);
 							labelSenteceSetShowColors(droppedLabel);
-							labelsMatchesList.add(droppedLabel);
-							
+							//labelsMatchesList.add(droppedLabel);
+							labelMatch(dragLabel, droppedLabel);
 							// Prima rimetto prefered size a null per poi avere il valore in base al testo
 							droppedLabel.setPreferredSize(null);
 							Dimension mins = new Dimension(droppedLabel.getPreferredSize().width, LABEL_HEIGHT);
@@ -485,6 +487,8 @@ public class JPArrangeLabels extends JLayeredPane {
 	public void shake() {
 		//for (int count = 0; count < tokens.length; count++) {
 		for (JLabel labelToDrag:labelsToDragList) {
+			if(labelsMatchesList.contains(labelToDrag))
+				continue;
 			/**
 			 * Random token has RANDOM position
 			 */
