@@ -131,6 +131,12 @@ public class JDArrangeSentence extends JDialog implements Quizinterface {
 		menuBar.add(mnNewMenu);
 		
 		JMenuItem mntmHelp = new JMenuItem("Help");
+		mntmHelp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Help h=new Help();
+				h.setVisible(true);
+			}
+		});
 		mnNewMenu.add(mntmHelp);
 		
 		JMenuItem mntmAbout = new JMenuItem("About");

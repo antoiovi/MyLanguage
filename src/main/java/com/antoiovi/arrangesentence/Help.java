@@ -1,4 +1,4 @@
-package com.antoiovi.mylanguage.gui;
+package com.antoiovi.arrangesentence;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -14,16 +14,24 @@ import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class About extends JDialog {
+public class Help extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 
+	String help[]= {
+			"Drag with the mouse the word from the upper siede and guess !\n",
+			"the righte position in the sentence in the lower side.\n\n",
+			"Ifthe word overlap eachother press shake to arrange on the panel .\n\n",
+
+			"You can load a text file with sentences you want to train with.\n",
+			"Every line in the file is a sentence..\n"
+	};
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		try {
-			About dialog = new About();
+			Help dialog = new Help();
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -34,7 +42,7 @@ public class About extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public About() {
+	public Help() {
 		setSize(new Dimension(257, 167));
 		setResizable(false);
 		setModal(true);
@@ -44,14 +52,16 @@ public class About extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 0));
 		{
-			JTextArea txtrAutoreAntoioviantoiovicomVersione = new JTextArea();
-			txtrAutoreAntoioviantoiovicomVersione.setEditable(false);
-			txtrAutoreAntoioviantoiovicomVersione.setEnabled(false);
-			txtrAutoreAntoioviantoiovicomVersione.setDisabledTextColor(Color.BLUE);
-			txtrAutoreAntoioviantoiovicomVersione.setCaretColor(Color.BLUE);
-			txtrAutoreAntoioviantoiovicomVersione.setBackground(Color.WHITE);
-			txtrAutoreAntoioviantoiovicomVersione.setText("Autore\r\nantoiovi@antoiovi.com\r\n\r\nVersione 2.1");
-			contentPanel.add(txtrAutoreAntoioviantoiovicomVersione);
+			JTextArea textArea = new JTextArea();
+			textArea.setEditable(false);
+			textArea.setEnabled(false);
+			textArea.setDisabledTextColor(Color.BLUE);
+			textArea.setCaretColor(Color.BLUE);
+			textArea.setBackground(Color.WHITE);
+			for(int i=0;i<help.length;i++) {
+				textArea.append(help[i]);
+			}
+			contentPanel.add(textArea);
 		}
 		{
 			JPanel buttonPane = new JPanel();

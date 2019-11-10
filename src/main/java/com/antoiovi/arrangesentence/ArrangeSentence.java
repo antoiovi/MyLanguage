@@ -64,9 +64,9 @@ private File file;
 		
 		String sentences[]= {
 				"This is a sentence. Try to guess it !",
-				"You can load sentencees in any language from a text file.",
-				"Create your file of sentences to exercise ypur self.",
-				"You can craete a file to learn verbs or adjectives."
+				"You can load sentences in any language from a text file.",
+				"Create your file of sentences to exercise your self.",
+				"You can create a file to learn verbs or adjectives or whatever."
 		};
 		for (int x = 0; x < sentences.length; x++) {
 		//	sentence=sentence.concat("word "+x);
