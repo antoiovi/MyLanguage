@@ -97,7 +97,7 @@ public class JDArrangeSentence extends JDialog implements Quizinterface {
 	public JDArrangeSentence() {
 		setMaximumSize(new Dimension(1000, 1000));
 		// setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100,50+ JPArrangeLabels.WIDTH, 600);
+		setBounds(100, 100,50+ JPArrangeLabels.WIDTH, 630);
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
