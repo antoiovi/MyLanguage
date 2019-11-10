@@ -129,7 +129,7 @@ public class JDArrangeSentence extends JDialog implements Quizinterface {
 			public void actionPerformed(ActionEvent arg0) {
 				index--;
 				index = (index == -1 ? 0 : index);
-				btnPrev.setVisible(index>0);
+				btnPrev.setVisible(index>=0);
 				resetSentence();
 
 			}
@@ -186,7 +186,7 @@ public class JDArrangeSentence extends JDialog implements Quizinterface {
 		// Recupera le frasi da eseguire
 		sentences = ordersentence.getSentences();
 		//Imposta la prima frase della lista
-		index = 1;
+		index = 0;
 		// disegna il pannello di gioco con la prima frase
 		//panel_ordsent.configSentence(sentences.get(index));
 		
@@ -246,7 +246,7 @@ public class JDArrangeSentence extends JDialog implements Quizinterface {
 	 * Aggiorna il testo di informazione delle domande giuste e sbagliate
 	 */
 	void updatescore() {
-		String s = String.format("RIGHT %d  WRONGS = %d", rightansw, wrongans);
+		String s = String.format("RIGHT %d  WRONGS = %d POINTS %d", rightansw, wrongans,(rightansw-wrongans));
 		lblScore.setText(s);
 	}
 	
@@ -265,7 +265,6 @@ public class JDArrangeSentence extends JDialog implements Quizinterface {
 	@Override
 	public void wrongAnswer() {
 		wrongans++;
-		rightansw--;
 		updatescore();
 	}
 
