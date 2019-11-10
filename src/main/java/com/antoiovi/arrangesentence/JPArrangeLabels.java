@@ -18,6 +18,33 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+/**
+ * 
+ * @author antoiovi
+ *
+ * Pannelo suddiviso in due parti: la parte superiore cintiene le parole sparse
+ * la parte inferiore la frase nascosta dove vanno insrite le parole.
+ * 
+ *  'E un LayeredPane in quanto utilizzato pers sposatre le labels durante le operzioni
+ *  di drag sul piano DragLayer
+ *  
+ * +++ SCHEMA DI COME SONO ORGANIZZATI I PANNELLI PRINCIPALI :
+ * 
+  *  JPOrderLabels extends JLayeredPane (null layout)
+	 *  	|_ layeredPane (gridlayout) [add(layeredPane, JLayeredPane.DEFAULT_LAYER);]
+	 *  	|	|   |_ setSize(LAYERED_PANE_SIZE);
+	 *  	|	|_panelWordsToDrag (layout null)
+	 *  	|	|_panelSentence   (Flow layout )
+	 *  	|_addMouseListener(myMouseAdapter);
+	 *  	|		|__clickedPanel= panelWordsToDrag OPPURE panelSentence oppure null
+	*		|_addMouseMotionListener(myMouseAdapter);  	
+ *
+ *	LICENCE :
+ *This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. 
+ *To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/ 
+ *or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
+ */
+
 
 public class JPArrangeLabels extends JLayeredPane {
 	public static final int WIDTH = 680;

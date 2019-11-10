@@ -35,7 +35,6 @@ import javax.swing.JMenu;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-//import java.awt.ScrollPane;
 /**
  * 
  * @author Antonello Iovino 23/07/2015
@@ -44,7 +43,9 @@ import java.awt.event.MouseEvent;
  *         di una frase
  *         Lavaora con una List<String> che contiene una certa quantita di frasi
  * 
- *
+ *This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. 
+ *To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/ 
+ *or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
  */
 public class JDArrangeSentence extends JDialog implements Quizinterface {
 	/**
