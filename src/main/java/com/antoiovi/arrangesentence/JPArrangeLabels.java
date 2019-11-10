@@ -18,44 +18,46 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+
 /**
  * 
  * @author antoiovi
  *
- * Pannelo suddiviso in due parti: la parte superiore cintiene le parole sparse
- * la parte inferiore la frase nascosta dove vanno insrite le parole.
+ *         Pannelo suddiviso in due parti: la parte superiore cintiene le parole
+ *         sparse la parte inferiore la frase nascosta dove vanno insrite le
+ *         parole.
  * 
- *  'E un LayeredPane in quanto utilizzato pers sposatre le labels durante le operzioni
- *  di drag sul piano DragLayer
- *  
- * +++ SCHEMA DI COME SONO ORGANIZZATI I PANNELLI PRINCIPALI :
+ *         'E un LayeredPane in quanto utilizzato pers sposatre le labels
+ *         durante le operzioni di drag sul piano DragLayer
  * 
-  *  JPOrderLabels extends JLayeredPane (null layout)
-	 *  	|_ layeredPane (gridlayout) [add(layeredPane, JLayeredPane.DEFAULT_LAYER);]
-	 *  	|	|   |_ setSize(LAYERED_PANE_SIZE);
-	 *  	|	|_panelWordsToDrag (layout null)
-	 *  	|	|_panelSentence   (Flow layout )
-	 *  	|_addMouseListener(myMouseAdapter);
-	 *  	|		|__clickedPanel= panelWordsToDrag OPPURE panelSentence oppure null
-	*		|_addMouseMotionListener(myMouseAdapter);  	
+ *         +++ SCHEMA DI COME SONO ORGANIZZATI I PANNELLI PRINCIPALI :
+ * 
+ *         JPOrderLabels extends JLayeredPane (null layout) |_ layeredPane
+ *         (gridlayout) [add(layeredPane, JLayeredPane.DEFAULT_LAYER);] | | |_
+ *         setSize(LAYERED_PANE_SIZE); | |_panelWordsToDrag (layout null) |
+ *         |_panelSentence (Flow layout ) |_addMouseListener(myMouseAdapter); |
+ *         |__clickedPanel= panelWordsToDrag OPPURE panelSentence oppure null
+ *         |_addMouseMotionListener(myMouseAdapter);
  *
- *	LICENCE :
- *This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. 
- *To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/ 
- *or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
+ *         LICENCE : This work is licensed under the Creative Commons
+ *         Attribution-ShareAlike 3.0 Unported License. To view a copy of this
+ *         license, visit http://creativecommons.org/licenses/by-sa/3.0/ or send
+ *         a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042,
+ *         USA.
  */
-
 
 public class JPArrangeLabels extends JLayeredPane {
 	public static final int WIDTH = 680;
 	public static final int HEIGHT = 480;
+	Color COLOR_PANEL_DRAG = Color.WHITE;
+	Color COLOR_PANEL_SENTENCE = Color.white;
 	Color LABLE_SENTENCE_COLOR = Color.red.brighter().brighter();
 	Color LABLE_SENTENCE_COLOR_OVERLAP = Color.cyan;
 	Color LABLE_COLOR_MATCH = Color.white;
-	Color LABLE_SENTENCE_FOREGROUND=Color.black;
-	Color LABEL_TODRAG_COLOR=Color.darkGray;
-	Color LABEL_TODRAG_FOREGROUND=Color.white;
-	
+	Color LABLE_SENTENCE_FOREGROUND = Color.black;
+	Color LABEL_TODRAG_COLOR = Color.darkGray;
+	Color LABEL_TODRAG_FOREGROUND = Color.white;
+
 	public static final int MAX_DRAG_WIDTH = WIDTH - 10;
 	public static final int MAX_DRAG_HEIGHT = HEIGHT / 2 - 10;
 	public static final int MARGIN = 10;
@@ -73,17 +75,14 @@ public class JPArrangeLabels extends JLayeredPane {
 	private static final Dimension LABEL_SIZE = new Dimension(LABEL_WIDTH, LABEL_HEIGHT);
 	private GridLayout gridlayout = new GridLayout(GRID_ROWS, GRID_COLS, GAP, GAP);
 	/***
-	 *  JPOrderLabels extends JLayeredPane (null layout)
-	 *  	|_ layeredPane (gridlayout) [add(layeredPane, JLayeredPane.DEFAULT_LAYER);]
-	 *  	|	|   |_ setSize(LAYERED_PANE_SIZE);
-	 *  	|	|_panelWordsToDrag (layout null)
-	 *  	|	|_panelSentence   (Flow layout )
-	 *  	|_addMouseListener(myMouseAdapter);
-	 *  	|		|__clickedPanel= panelWordsToDrag OPPURE panelSentence oppure null
-	*		|_addMouseMotionListener(myMouseAdapter);  			
-	 */		
-	
-	
+	 * JPOrderLabels extends JLayeredPane (null layout) |_ layeredPane (gridlayout)
+	 * [add(layeredPane, JLayeredPane.DEFAULT_LAYER);] | | |_
+	 * setSize(LAYERED_PANE_SIZE); | |_panelWordsToDrag (layout null) |
+	 * |_panelSentence (Flow layout ) |_addMouseListener(myMouseAdapter); |
+	 * |__clickedPanel= panelWordsToDrag OPPURE panelSentence oppure null
+	 * |_addMouseMotionListener(myMouseAdapter);
+	 */
+
 	private JPanel layeredPane = new JPanel(gridlayout);
 
 	private JPanel panelWordsToDrag;
@@ -93,8 +92,6 @@ public class JPArrangeLabels extends JLayeredPane {
 	List<JLabel> labelsSentenceList = new ArrayList<JLabel>();
 	List<JLabel> labelsMatchesList = new ArrayList<JLabel>();
 
-	 
-
 	/**************
 	 * Quiz interface : per comunicare cpon la classe (JDialog) che contiene il
 	 * pannello : public void wrongAnswer(); public void rightAnswer(); public void
@@ -103,7 +100,6 @@ public class JPArrangeLabels extends JLayeredPane {
 	 * Nel pannelo padre usare setQuiz(...) per inizzializzarlo
 	 */
 	Quizinterface quiz;
- 
 
 	/**
 	 * Riferimento al pannello principale : Creata per : potere riportare le
@@ -114,18 +110,17 @@ public class JPArrangeLabels extends JLayeredPane {
 
 	String sentence = "  Questa e una frase prova ad indovinarla se sei capace ";
 	private MyMouseAdapter myMouseAdapter;
-	private int minimumLenghtWord=3;
-	
-	
+	private int minimumLenghtWord = 3;
+
 	/**
 	 * Costruttore
 	 */
 	public JPArrangeLabels() {
 
 		panelWordsToDrag = new JPanel();
-		panelWordsToDrag.setBackground(Color.white);
+		panelWordsToDrag.setBackground(COLOR_PANEL_DRAG);
 		panelSentence = new JPanel();
-		panelSentence.setBackground(Color.white);
+		panelSentence.setBackground(COLOR_PANEL_SENTENCE);
 
 		layeredPane.setSize(LAYERED_PANE_SIZE);
 		layeredPane.setLocation(2 * GAP, 2 * GAP);
@@ -149,9 +144,8 @@ public class JPArrangeLabels extends JLayeredPane {
 		addMouseListener(myMouseAdapter);
 		addMouseMotionListener(myMouseAdapter);
 		jpordelabels = this;
+		setThema(THEMA_POKER);
 	}
-
-	
 
 	public void setSentence(String sentence) {
 		// Rimuovi spazi all'inizio ed alla fine
@@ -162,7 +156,7 @@ public class JPArrangeLabels extends JLayeredPane {
 		this.paintSentenceLabels();
 		this.paintDragLabels();
 	}
-	
+
 	private void clearSentence() {
 		for (JLabel lbl : labelsToDragList)
 			panelWordsToDrag.remove(lbl);
@@ -173,20 +167,21 @@ public class JPArrangeLabels extends JLayeredPane {
 		labelsSentenceList.clear();
 
 	}
+
 	private void paintDragLabels() {
 		for (JLabel lbl : labelsToDragList) {
-			if(labelsMatchesList.contains(lbl))
+			if (labelsMatchesList.contains(lbl))
 				continue;
 			panelWordsToDrag.add(lbl);
-		// Prima rimetto prefered size a null per poi avere il valore in base al testo
-		lbl.setPreferredSize(null);
-		Dimension mins = new Dimension(lbl.getPreferredSize().width, LABEL_HEIGHT);
-		lbl.setPreferredSize(mins);
-		// Per fare in modo che cambiando colore la dimensione sia quella voluta
-		Rectangle rect = new Rectangle(lbl.getX(), lbl.getY(),
-				lbl.getPreferredSize().width, lbl.getPreferredSize().height);
-		lbl.setBounds(rect);
-		
+			// Prima rimetto prefered size a null per poi avere il valore in base al testo
+			lbl.setPreferredSize(null);
+			Dimension mins = new Dimension(lbl.getPreferredSize().width, LABEL_HEIGHT);
+			lbl.setPreferredSize(mins);
+			// Per fare in modo che cambiando colore la dimensione sia quella voluta
+			Rectangle rect = new Rectangle(lbl.getX(), lbl.getY(), lbl.getPreferredSize().width,
+					lbl.getPreferredSize().height);
+			lbl.setBounds(rect);
+
 		}
 		panelWordsToDrag.validate();
 
@@ -250,13 +245,13 @@ public class JPArrangeLabels extends JLayeredPane {
 			/**
 			 * if too short show in the answers...
 			 */
-			if(tokens[count].length() <= minimumLenghtWord) {
-			 rect.setSize(LABEL_WIDTH_SHORT, rect.height);
+			if (tokens[count].length() <= minimumLenghtWord) {
+				rect.setSize(LABEL_WIDTH_SHORT, rect.height);
 				labelsentence.setBounds(rect);
 				// Prima rimetto prefered size a null per poi avere il valore in base al testo
 				labelsentence.setPreferredSize(null);
 				labelsentence.setText(tokens[count]);
-				//Imposta i colori per le etichette da mostarre
+				// Imposta i colori per le etichette da mostarre
 				labelSenteceSetShowColors(labelsentence);
 				labelsToDragList.remove(labelToDrag);
 				labelsMatchesList.add(labelsentence);
@@ -265,10 +260,8 @@ public class JPArrangeLabels extends JLayeredPane {
 		}
 	}
 
-	
-
 	void log(String s) {
-	//	System.out.println(s);
+		// System.out.println(s);
 	}
 
 	/**
@@ -306,10 +299,10 @@ public class JPArrangeLabels extends JLayeredPane {
 				JLabel lbl = (JLabel) c;
 				// log("EXITED LABLE "+lbl.getText());
 				if (labelsMatchesList.contains(lbl))
-					//lbl.setBackground(LABLE_COLOR_MATCH);
+					// lbl.setBackground(LABLE_COLOR_MATCH);
 					labelSenteceSetShowColors(lbl);
 				else if (labelsSentenceList.contains(lbl))
-					//lbl.setBackground(LABLE_SENTENCE_COLOR);
+					// lbl.setBackground(LABLE_SENTENCE_COLOR);
 					labelSenteceSetHideColors(lbl);
 			}
 
@@ -459,7 +452,7 @@ public class JPArrangeLabels extends JLayeredPane {
 							// Se la LABEL dove e stato laciato il mouse
 							// NON 'e nella lista delle labels gia indovinate
 							// e non 'e uguale alla label trascinata
-							//droppedLabel.setBackground(LABLE_SENTENCE_COLOR);
+							// droppedLabel.setBackground(LABLE_SENTENCE_COLOR);
 							labelSenteceSetHideColors(droppedLabel);
 							quiz.wrongAnswer();
 
@@ -472,8 +465,8 @@ public class JPArrangeLabels extends JLayeredPane {
 			}
 			// Se non MATCH allora riposiziona la label al suo posto
 			if (!label_match) {
-				//log("DRAGLABEL NON MATCH:");
-				//logLabel(dragLabel);
+				// log("DRAGLABEL NON MATCH:");
+				// logLabel(dragLabel);
 				clickedPanel.add(dragLabel);
 				clickedPanel.revalidate();
 				dragLabel.setBounds(orignialBounds);
@@ -506,9 +499,9 @@ public class JPArrangeLabels extends JLayeredPane {
 	}
 
 	public void shake() {
-		//for (int count = 0; count < tokens.length; count++) {
-		for (JLabel labelToDrag:labelsToDragList) {
-			if(labelsMatchesList.contains(labelToDrag))
+		// for (int count = 0; count < tokens.length; count++) {
+		for (JLabel labelToDrag : labelsToDragList) {
+			if (labelsMatchesList.contains(labelToDrag))
 				continue;
 			/**
 			 * Random token has RANDOM position
@@ -539,23 +532,91 @@ public class JPArrangeLabels extends JLayeredPane {
 		label.setBackground(LABLE_COLOR_MATCH);
 		label.setForeground(LABLE_SENTENCE_FOREGROUND);
 	}
+
 	void labelSenteceSetHideColors(JLabel label) {
 		label.setBackground(LABLE_SENTENCE_COLOR);
 		label.setForeground(LABLE_SENTENCE_COLOR);
 	}
-	
-	
+
 	/**
-	 *  - Rimuovi labeltodrag dalle labelsToDragList
-	 *  - Cambia il colore della labelsentence
-	 *  - Aggiunge la labelsentence alla liste delle labels gia indovinate
+	 * - Rimuovi labeltodrag dalle labelsToDragList - Cambia il colore della
+	 * labelsentence - Aggiunge la labelsentence alla liste delle labels gia
+	 * indovinate
+	 * 
 	 * @param labeltodrag
 	 * @param labelsentence
 	 */
-	void labelMatch(JLabel labeltodrag,JLabel labelsentence) {
+	void labelMatch(JLabel labeltodrag, JLabel labelsentence) {
 		labelsToDragList.remove(labeltodrag);
 		labelsentence.setBackground(LABLE_COLOR_MATCH);
 		labelsMatchesList.add(labelsentence);
 	}
-	
+
+	static final String THEMA_NORMAL = "NORMAL";
+
+	static final String THEMA_DOMINO = "DOMINO";
+	static final String THEMA_POKER = "POKER";
+	static final String THEMA_SKY = "SKY";
+
+	void setThema(String thema) {
+		if (thema.equals(THEMA_NORMAL)) {
+			  COLOR_PANEL_DRAG = Color.WHITE;
+			  COLOR_PANEL_SENTENCE = Color.white;
+			LABLE_SENTENCE_COLOR = Color.red.brighter().brighter();
+			LABLE_SENTENCE_COLOR_OVERLAP = Color.cyan;
+			LABLE_COLOR_MATCH = Color.white;
+			LABLE_SENTENCE_FOREGROUND = Color.black;
+			LABEL_TODRAG_COLOR = Color.darkGray;
+			LABEL_TODRAG_FOREGROUND = Color.white;
+		} else if (thema.equals(THEMA_DOMINO)) {
+			 COLOR_PANEL_DRAG = Color.black;
+			  COLOR_PANEL_SENTENCE = Color.GRAY;
+			LABLE_SENTENCE_COLOR = Color.white;
+			LABLE_SENTENCE_COLOR_OVERLAP = Color.cyan;
+			LABLE_COLOR_MATCH = Color.white;
+			LABLE_SENTENCE_FOREGROUND = Color.black;
+			LABEL_TODRAG_COLOR = Color.WHITE;
+			LABEL_TODRAG_FOREGROUND = Color.BLUE;
+		} else if (thema.equals(THEMA_POKER)) {
+			COLOR_PANEL_DRAG = Color.GREEN.darker();
+			 COLOR_PANEL_SENTENCE = Color.GREEN.darker().darker();
+			LABLE_SENTENCE_COLOR = Color.red.brighter().brighter();
+			LABLE_SENTENCE_COLOR_OVERLAP = Color.cyan;
+			LABLE_COLOR_MATCH = Color.white;
+			LABLE_SENTENCE_FOREGROUND = Color.RED.darker().darker();
+			LABEL_TODRAG_COLOR = Color.WHITE;
+			LABEL_TODRAG_FOREGROUND = Color.RED;
+		} else if (thema.equals(THEMA_SKY)) {
+			COLOR_PANEL_DRAG = Color.BLUE;
+			 COLOR_PANEL_SENTENCE = Color.GREEN.darker().darker();
+			LABLE_SENTENCE_COLOR = Color.red.brighter().brighter();
+			LABLE_SENTENCE_COLOR_OVERLAP = Color.cyan;
+			LABLE_COLOR_MATCH = Color.white;
+			LABLE_SENTENCE_FOREGROUND = Color.RED.darker().darker();
+			LABEL_TODRAG_COLOR = Color.WHITE;
+			LABEL_TODRAG_FOREGROUND = Color.DARK_GRAY;
+		}
+		panelWordsToDrag.setBackground(COLOR_PANEL_DRAG);
+		panelWordsToDrag.validate();
+		panelSentence.setBackground(COLOR_PANEL_SENTENCE);
+		for (JLabel lbl : labelsToDragList) {
+			if (labelsMatchesList.contains(lbl))
+				continue;
+			lbl.setForeground(LABEL_TODRAG_FOREGROUND);
+			lbl.setBackground(LABEL_TODRAG_COLOR);
+		}
+		for (JLabel lbl : labelsSentenceList) {
+			lbl.setBackground(LABLE_SENTENCE_COLOR);
+			String txt=lbl.getText();
+			if ((txt.length() <= minimumLenghtWord)||labelsMatchesList.contains(lbl))
+				labelSenteceSetShowColors(lbl);
+			else
+				labelSenteceSetHideColors(lbl);
+
+		}
+		
+		
+		repaint();
+	}
+
 }

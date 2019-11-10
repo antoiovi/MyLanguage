@@ -9,12 +9,13 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.List;
- 
+
 import javax.swing.JScrollPane;
 
 import java.awt.Dimension;
@@ -22,36 +23,40 @@ import java.awt.Button;
 import java.io.File;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
- 
+
 import com.antoiovi.mylanguage.gui.About;
 
- import javax.swing.JMenu;
- 
+import javax.swing.JMenu;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JRadioButtonMenuItem;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
+
 /**
  * 
  * @author Antonello Iovino 23/07/2015
  * 
  *         Vengono disposte sul pannello superiore in ordine sparso delle parole
- *         di una frase
- *         Lavaora con una List<String> che contiene una certa quantita di frasi
+ *         di una frase Lavaora con una List<String> che contiene una certa
+ *         quantita di frasi
  * 
- *This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Unported License. 
- *To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/ 
- *or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
+ *         This work is licensed under the Creative Commons
+ *         Attribution-ShareAlike 3.0 Unported License. To view a copy of this
+ *         license, visit http://creativecommons.org/licenses/by-sa/3.0/ or send
+ *         a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042,
+ *         USA.
  */
 public class JDArrangeSentence extends JDialog implements Quizinterface {
 	/**
-	 * 	private OrderSentence ordersentence;
-	 * 	 questa classe si fa carico di :
-	 * 		- inizzializzare la lista di stringhe(frasi) tramite un file di testo
-	 *  	- verificare che il file sia corretto
-	 *  	- creare una lista di stringhe (una stringa per ogni riga di testo del file)
-	 *  	- restituisce una lista mescolata delle frasi
-	 *  	- al bisogno restituisce nuovamente la lista di frasi in ordine sparso
-	 *  */
+	 * private OrderSentence ordersentence; questa classe si fa carico di : -
+	 * inizzializzare la lista di stringhe(frasi) tramite un file di testo -
+	 * verificare che il file sia corretto - creare una lista di stringhe (una
+	 * stringa per ogni riga di testo del file) - restituisce una lista mescolata
+	 * delle frasi - al bisogno restituisce nuovamente la lista di frasi in ordine
+	 * sparso
+	 */
 	private ArrangeSentence ordersentence;
-	
-	
+
 	int index = 0;
 	File file;
 	/**
@@ -66,7 +71,7 @@ public class JDArrangeSentence extends JDialog implements Quizinterface {
 	private JPArrangeLabels panel_ordsent;
 
 	private JLabel lblNotification;
-	
+
 	/**
 	 * Launch the application.
 	 */
@@ -143,6 +148,67 @@ public class JDArrangeSentence extends JDialog implements Quizinterface {
 		
 		mnNewMenu.add(mntmAbout);
 		
+		JMenu mnNewMenu_2 = new JMenu("Themas");
+		menuBar.add(mnNewMenu_2);
+		
+		JRadioButtonMenuItem rdbtnmntmNormal = new JRadioButtonMenuItem("Normal");
+		rdbtnmntmNormal.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				int state = e.getStateChange(); 
+				if(state == ItemEvent.SELECTED){ 
+				//	log("SELECTED");
+				// passato da NON selezionato a selezionato 
+					panel_ordsent.setThema(JPArrangeLabels.THEMA_NORMAL);
+				}
+			}
+		});
+		mnNewMenu_2.add(rdbtnmntmNormal);
+		
+		JRadioButtonMenuItem rdbtnmntmDomino = new JRadioButtonMenuItem("Domino");
+		rdbtnmntmDomino.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				int state = e.getStateChange(); 
+				if(state == ItemEvent.SELECTED){ 
+					//log("SELECTED");
+				// passato da NON selezionato a selezionato 
+					panel_ordsent.setThema(JPArrangeLabels.THEMA_DOMINO);
+				}
+			}
+		});
+		mnNewMenu_2.add(rdbtnmntmDomino);
+		
+		JRadioButtonMenuItem rdbtnmntmPoker = new JRadioButtonMenuItem("Poker");
+		rdbtnmntmPoker.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				int state = e.getStateChange(); 
+				if(state == ItemEvent.SELECTED){ 
+					//log("SELECTED");
+				// passato da NON selezionato a selezionato 
+					panel_ordsent.setThema(JPArrangeLabels.THEMA_POKER);
+				}
+			}
+		});
+		mnNewMenu_2.add(rdbtnmntmPoker);
+		
+		JRadioButtonMenuItem rdbtnmntmSky = new JRadioButtonMenuItem("Sky");
+		rdbtnmntmSky.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				int state = e.getStateChange(); 
+				if(state == ItemEvent.SELECTED){ 
+					//log("SELECTED");
+				// passato da NON selezionato a selezionato 
+					panel_ordsent.setThema(JPArrangeLabels.THEMA_SKY);
+				}
+			}
+		});
+		
+		mnNewMenu_2.add(rdbtnmntmSky);
+		
+		ButtonGroup group = new ButtonGroup();
+	    group.add(rdbtnmntmDomino);
+	    group.add(rdbtnmntmPoker);
+	    group.add(rdbtnmntmSky);
+	    group.add(rdbtnmntmNormal);
 		// setMaximumSize(new Dimension(600,600));
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -308,5 +374,8 @@ public class JDArrangeSentence extends JDialog implements Quizinterface {
 	public void endGame() {
 		lblNotification.setText("END !!");
 
+	}
+	void log(String s) {
+		System.out.println(s);
 	}
 }
