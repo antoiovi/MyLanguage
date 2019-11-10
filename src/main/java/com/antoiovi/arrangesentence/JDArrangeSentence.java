@@ -14,11 +14,7 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.List;
-import javax.swing.JCheckBox;
  
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
-
 import javax.swing.JScrollPane;
 
 import java.awt.Dimension;
@@ -26,15 +22,11 @@ import java.awt.Button;
 import java.io.File;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.event.MenuKeyListener;
-
+ 
 import com.antoiovi.mylanguage.gui.About;
 
-import javax.swing.event.MenuKeyEvent;
-import javax.swing.JMenu;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
+ import javax.swing.JMenu;
+ 
 /**
  * 
  * @author Antonello Iovino 23/07/2015

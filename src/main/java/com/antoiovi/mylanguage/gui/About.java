@@ -2,13 +2,11 @@ package com.antoiovi.mylanguage.gui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.TextArea;
-
+ 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import java.awt.CardLayout;
 import java.awt.Dimension;
 import javax.swing.JTextArea;
 import java.awt.Color;
