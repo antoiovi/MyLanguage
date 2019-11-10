@@ -62,11 +62,15 @@ private File file;
 	public ArrangeSentence(){
 		sentences_list=new Vector<String>();
 		
-		String sentence=  "This is a sentence. Try to guess it ! abcdefghilmnopqrst ";
-
-		for (int x = 0; x < 5; x++) {
+		String sentences[]= {
+				"This is a sentence. Try to guess it !",
+				"You can load sentencees in any language from a text file.",
+				"Create your file of sentences to exercise ypur self.",
+				"You can craete a file to learn verbs or adjectives."
+		};
+		for (int x = 0; x < sentences.length; x++) {
 		//	sentence=sentence.concat("word "+x);
-			sentences_list.add(sentence);
+			sentences_list.add(sentences[x]);
 		}
 		 
 		/**
