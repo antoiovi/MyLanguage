@@ -409,10 +409,9 @@ public class JPArrangeLabels extends JLayeredPane {
 							 * La label dove 'e stata rilasciato il mouse ha il testo = alla label
 							 * trascinata, e non si trova nella lista delle labels gia' indovinate
 							 */
-							//droppedLabel.setBackground(LABLE_COLOR_MATCH);
 							labelSenteceSetShowColors(droppedLabel);
-							//labelsMatchesList.add(droppedLabel);
 							labelMatch(dragLabel, droppedLabel);
+							quiz.rightAnswer();
 							// Prima rimetto prefered size a null per poi avere il valore in base al testo
 							droppedLabel.setPreferredSize(null);
 							Dimension mins = new Dimension(droppedLabel.getPreferredSize().width, LABEL_HEIGHT);
@@ -435,6 +434,8 @@ public class JPArrangeLabels extends JLayeredPane {
 							// e non 'e uguale alla label trascinata
 							//droppedLabel.setBackground(LABLE_SENTENCE_COLOR);
 							labelSenteceSetHideColors(droppedLabel);
+							quiz.wrongAnswer();
+
 						}
 
 					}
