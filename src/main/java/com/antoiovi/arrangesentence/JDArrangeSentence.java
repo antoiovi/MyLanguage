@@ -24,6 +24,16 @@ import javax.swing.JScrollPane;
 import java.awt.Dimension;
 import java.awt.Button;
 import java.io.File;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.event.MenuKeyListener;
+
+import com.antoiovi.mylanguage.gui.About;
+
+import javax.swing.event.MenuKeyEvent;
+import javax.swing.JMenu;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 //import java.awt.ScrollPane;
 /**
@@ -87,6 +97,53 @@ public class JDArrangeSentence extends JDialog implements Quizinterface {
 		setMaximumSize(new Dimension(1000, 1000));
 		// setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100,50+ JPArrangeLabels.WIDTH, 600);
+		
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+		
+		JMenu mnNewMenu_1 = new JMenu("File");
+		menuBar.add(mnNewMenu_1);
+		
+		JMenuItem mntmNewMenuItem = new JMenuItem("Open file");
+		mntmNewMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser jfilechooser = new JFileChooser();
+				jfilechooser.setDialogType(JFileChooser.OPEN_DIALOG);
+				int x = jfilechooser.showOpenDialog(contentPane);
+				if (x == JFileChooser.APPROVE_OPTION) {
+					file = jfilechooser.getSelectedFile();
+				}
+				setDataFile(file);
+			
+			}
+		});
+		mnNewMenu_1.add(mntmNewMenuItem);
+		
+		JMenuItem mntmNewMenuItem_1 = new JMenuItem("Exit");
+		mntmNewMenuItem_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				exitProgram();
+			}
+		});
+		mnNewMenu_1.add(mntmNewMenuItem_1);
+		
+		JMenu mnNewMenu = new JMenu("Help");
+		menuBar.add(mnNewMenu);
+		
+		JMenuItem mntmHelp = new JMenuItem("Help");
+		mnNewMenu.add(mntmHelp);
+		
+		JMenuItem mntmAbout = new JMenuItem("About");
+		mntmAbout.addActionListener(new ActionListener() {
+	            public void actionPerformed(ActionEvent e) {
+	            	About a=new About();
+					a.setVisible(true);
+	            }
+
+	        });
+		
+		mnNewMenu.add(mntmAbout);
+		
 		// setMaximumSize(new Dimension(600,600));
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -95,32 +152,6 @@ public class JDArrangeSentence extends JDialog implements Quizinterface {
 
 		JPanel panel_1 = new JPanel();
 		contentPane.add(panel_1, BorderLayout.NORTH);
-		/*****************
-		 * Button close
-		 */
-		JButton buttonExit = new JButton("Exit ");
-		buttonExit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				exitProgram();
-			}
-		});
-		panel_1.add(buttonExit);
-		/*****************************
-		 * OpenFile
-		 */
-		JButton btnOpenfile = new JButton("Open file");
-		btnOpenfile.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				JFileChooser jfilechooser = new JFileChooser();
-				jfilechooser.setDialogType(JFileChooser.OPEN_DIALOG);
-				int x = jfilechooser.showOpenDialog(contentPane);
-				if (x == JFileChooser.APPROVE_OPTION) {
-					file = jfilechooser.getSelectedFile();
-				}
-				setDataFile(file);
-			}
-		});
-		panel_1.add(btnOpenfile);
 
 		lblScore = new JLabel("New label");
 		panel_1.add(lblScore);
@@ -279,5 +310,4 @@ public class JDArrangeSentence extends JDialog implements Quizinterface {
 		lblNotification.setText("END !!");
 
 	}
-	
 }
