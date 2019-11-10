@@ -2,6 +2,7 @@ package com.antoiovi.mylanguage.gui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.TextArea;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -38,20 +39,24 @@ public class About extends JDialog {
 		setSize(new Dimension(257, 167));
 		setResizable(false);
 		setModal(true);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 250, 200);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 0));
 		{
-			JTextArea txtrAutoreAntoioviantoiovicomVersione = new JTextArea();
-			txtrAutoreAntoioviantoiovicomVersione.setEditable(false);
-			txtrAutoreAntoioviantoiovicomVersione.setEnabled(false);
-			txtrAutoreAntoioviantoiovicomVersione.setDisabledTextColor(Color.BLUE);
-			txtrAutoreAntoioviantoiovicomVersione.setCaretColor(Color.BLUE);
-			txtrAutoreAntoioviantoiovicomVersione.setBackground(Color.WHITE);
-			txtrAutoreAntoioviantoiovicomVersione.setText("Autore\r\nantoiovi@antoiovi.com\r\n\r\nVersione 2.1");
-			contentPanel.add(txtrAutoreAntoioviantoiovicomVersione);
+			JTextArea txtArea = new JTextArea();
+			txtArea.setEditable(false);
+			txtArea.setEnabled(false);
+			txtArea.setDisabledTextColor(Color.BLUE);
+			txtArea.setCaretColor(Color.BLUE);
+			txtArea.setBackground(Color.WHITE);
+			txtArea.append("Autore :\n Antonello Iovino \n");
+			txtArea.append("antoiovi@antoiovi.com\n");
+
+			txtArea.append("Version 1.0\n");
+
+			contentPanel.add(txtArea);
 		}
 		{
 			JPanel buttonPane = new JPanel();
