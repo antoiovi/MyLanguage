@@ -25,6 +25,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import com.antoiovi.mylanguage.gui.About;
+import com.antoiovi.mylanguage.gui.MainApp;
 
 import javax.swing.JMenu;
 import javax.swing.JCheckBoxMenuItem;
@@ -107,6 +108,7 @@ public class JDArrangeSentence extends JDialog implements Quizinterface {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser jfilechooser = new JFileChooser();
 				jfilechooser.setDialogType(JFileChooser.OPEN_DIALOG);
+				jfilechooser.setCurrentDirectory(new File(MainApp.getWorkingDir()));
 				int x = jfilechooser.showOpenDialog(contentPane);
 				if (x == JFileChooser.APPROVE_OPTION) {
 					file = jfilechooser.getSelectedFile();

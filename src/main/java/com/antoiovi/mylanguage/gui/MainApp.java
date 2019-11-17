@@ -1,5 +1,8 @@
 package com.antoiovi.mylanguage.gui;
 
+import java.io.File;
+import java.net.URISyntaxException;
+
 import com.antoiovi.arrangesentence.JDArrangeSentence;
 
 /**
@@ -17,5 +20,12 @@ public class MainApp {
 		jdordersentece.setVisible(true);
 
 	}
-
+public static final String getWorkingDir() {
+	try {
+		return new File(MainApp.class.getProtectionDomain().getCodeSource().getLocation()
+			    .toURI()).getPath();
+	} catch (URISyntaxException e) {
+		return null;
+	}
+	}
 }
